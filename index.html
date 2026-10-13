@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Un Rincón Dominicano | Plataforma Turística Oficial 🇩🇴</title>
+  <meta name="description" content="Descubre República Dominicana, explora sus 31 provincias, gastronomía, lugares para comer y reserva excursiones organizadas con transporte y modo para centros educativos." />
+
+  <!-- Google Fonts: Playfair Display, Caveat (script dominicano), Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            script: ['Caveat', 'cursive'],
+          },
+          colors: {
+            'dom-blue': '#002f6c',
+            'dom-dark': '#0b2545',
+            'dom-red': '#ce1126',
+            'dom-gold': '#ffe066',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .font-script-caribbean { font-family: 'Caveat', cursive; }
+    .font-serif-title { font-family: 'Playfair Display', Georgia, serif; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-[#fafaf9] text-slate-800 antialiased font-sans selection:bg-[#ce1126] selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- TOP BAR: SISTEMA, MODO EDUCATIVO, MONEDA, IDIOMA Y ADMIN       -->
+  <!-- ============================================================== -->
+  <div class="bg-[#0b2545] text-white text-xs px-4 py-2 border-b border-white/10 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <span class="flex items-center gap-1.5 font-medium">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Plataforma Turística Oficial Multilingüe • República Dominicana 🇩🇴
+      </span>
+      <span id="edu-badge-top" class="hidden items-center gap-1 bg-[#ce1126] text-white px-2 py-0.5 rounded-full text-[11px] font-semibold tracking-wide">
+        🎓 MODO CENTRO EDUCATIVO ACTIVO
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3 sm:gap-4">
+      <!-- Botón de alternar Modo Centro Educativo -->
+      <button id="toggle-edu-btn" onclick="toggleEducationalMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-white/10 text-white/90 hover:bg-white/20 transition-all">
+        <span>🎓 Modo Escolar: <strong id="edu-status-text">OFF</strong></span>
+      </button>
+
+      <!-- Selector de Moneda (RD$ / USD$) -->
+      <div class="flex items-center bg-white/10 rounded-md p-0.5 text-[11px]">
+        <button id="btn-currency-rd" onclick="setCurrency('RD')" class="px-2 py-0.5 rounded bg-[#ce1126] text-white font-bold">RD$</button>
+        <button id="btn-currency-usd" onclick="setCurrency('USD')" class="px-2 py-0.5 rounded text-white/80 hover:text-white">USD$</button>
+      </div>
+
+      <!-- Selector de Idioma (Español / English) -->
+      <div class="flex items-center bg-white/10 rounded-md p-0.5 text-[11px]">
+        <button id="btn-lang-es" onclick="setLanguage('es')" class="px-2 py-0.5 rounded bg-white text-[#0b2545] font-bold">ES 🇩🇴</button>
+        <button id="btn-lang-en" onclick="setLanguage('en')" class="px-2 py-0.5 rounded text-white/80 hover:text-white">EN 🇺🇸</button>
+      </div>
+
+      <!-- Panel Admin -->
+      <button onclick="openModal('modal-admin')" class="flex items-center gap-1 text-[11px] text-white/80 hover:text-white underline underline-offset-2 ml-1">
+        <i data-lucide="shield-check" class="w-3 h-3"></i> Panel Admin
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerta de Modo Centro Educativo cuando está activo -->
+  <div id="edu-banner-alert" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs text-amber-900 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="graduation-cap" class="w-4 h-4 text-amber-700 shrink-0"></i>
+        <p class="font-medium">
+          <strong id="t-edu-title">MODO CENTRO EDUCATIVO ACTIVADO:</strong> 
+          <span id="t-edu-desc">La plataforma ha filtrado lugares no aptos para menores (hoteles para adultos, casinos y discotecas) y optimiza visitas patrimoniales, científicas y ecológicas con transporte certificado.</span>
+        </p>
+      </div>
+      <button onclick="toggleEducationalMode()" class="text-amber-800 hover:text-amber-950 font-bold underline shrink-0 ml-4">
+        Desactivar
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- NAVEGACIÓN PRINCIPAL (Diseño fiel a imagen de referencia)        -->
+  <!-- ============================================================== -->
+  <header class="sticky top-8 z-40 glass-nav shadow-xs border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-4">
+        <!-- Logo -->
+        <a href="#hero" class="flex items-center gap-3">
+          <div class="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-tr from-[#002f6c] via-[#0b2545] to-[#ce1126] text-white shadow-md">
+            <i data-lucide="palmtree" class="w-6 h-6"></i>
+            <span class="absolute -bottom-1 -right-1 text-[11px]">🇩🇴</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-serif-title text-2xl font-bold tracking-tight text-[#002f6c] leading-tight">
+              Un Rincón <span class="text-[#ce1126]">Dominicano</span>
+            </span>
+            <span class="text-[10px] text-slate-500 font-medium tracking-wide uppercase">
+              Plataforma Turística Oficial
+            </span>
+          </div>
+        </a>
+
+        <!-- Menú Principal -->
+        <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-700">
+          <a href="#hero" class="hover:text-[#ce1126] transition-colors py-1 text-[#ce1126] font-bold" id="nav-inicio">Inicio</a>
+          <a href="#destinos-destacados" class="hover:text-[#002f6c] transition-colors py-1" id="nav-destinos">Destinos</a>
+          <a href="#provincias-31" class="hover:text-[#002f6c] transition-colors py-1 font-semibold text-[#002f6c]" id="nav-provincias">Las 31 Provincias</a>
+          <a href="#sabores-tierra" class="hover:text-[#002f6c] transition-colors py-1" id="nav-gastronomia">Gastronomía</a>
+          <a href="#excursiones-organizadas" class="hover:text-[#ce1126] transition-colors py-1 flex items-center gap-1 text-[#002f6c] font-semibold" id="nav-excursiones">
+            <i data-lucide="bus" class="w-4 h-4 text-[#ce1126]"></i> Excursiones Organizadas
+          </a>
+          <a href="#alojamientos" class="hover:text-[#002f6c] transition-colors py-1" id="nav-alojamientos">Alojamientos</a>
+        </nav>
+
+        <!-- Barra de búsqueda y acciones -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="relative hidden md:block w-48 xl:w-56">
+            <input
+              type="text"
+              id="global-search-input"
+              oninput="handleSearch(this.value)"
+              placeholder="Buscar destinos, platos..."
+              class="w-full text-xs pl-8 pr-3 py-2 rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#002f6c]/20 focus:border-[#002f6c]"
+            />
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+          </div>
+
+          <!-- Mis Reservas -->
+          <button onclick="openModal('modal-reservas')" class="relative flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold text-[#002f6c] bg-slate-100 hover:bg-slate-200 transition-colors">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#ce1126]"></i>
+            <span class="hidden sm:inline">Mis Reservas</span>
+            <span id="badge-bookings-count" class="bg-[#ce1126] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">1</span>
+          </button>
+
+          <!-- Itinerario & Favoritos -->
+          <button onclick="openModal('modal-itinerario')" class="flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+            <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-500 fill-rose-500"></i>
+            <span class="hidden md:inline">Itinerario</span>
+          </button>
+
+          <!-- Perfil / Registro Escolar -->
+          <button onclick="openModal('modal-profile')" class="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-[#002f6c] to-[#0b2545] hover:opacity-95 shadow-xs transition-opacity">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            <span id="header-user-name" class="max-w-[90px] truncate">Mi Cuenta</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- HERO BANNER (Idéntico a imagen 1 y 3 de referencia)            -->
+  <!-- ============================================================== -->
+  <section id="hero" class="relative w-full min-h-[580px] md:min-h-[640px] flex items-center justify-center overflow-hidden">
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
+      style="background-image: url('https://images.pexels.com/photos/1030322/pexels-photo-1030322.png?auto=compress&cs=tinysrgb&fit=crop&h=1000&w=1920');"
+    >
+      <div class="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full flex flex-col justify-center">
+      <div class="max-w-2xl text-white">
+        <p id="t-hero-sub" class="tracking-[0.25em] text-xs md:text-sm font-semibold uppercase text-white/90 drop-shadow-md mb-2">
+          DESCUBRE
+        </p>
+
+        <h1 class="font-script-caribbean text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white drop-shadow-lg leading-tight mb-4">
+          Un Rincón <br />
+          <span class="text-[#ffe066] drop-shadow-md">Dominicano</span>
+        </h1>
+
+        <p id="t-hero-desc" class="text-base sm:text-lg md:text-xl text-white/95 font-medium drop-shadow-md leading-relaxed mb-8 max-w-xl">
+          La belleza de nuestra tierra, su gente, su cultura y sus rincones más especiales.
+        </p>
+
+        <div class="flex flex-wrap items-center gap-6">
+          <a
+            href="#destinos-destacados"
+            id="t-hero-btn"
+            class="inline-flex items-center gap-2 bg-[#ce1126] hover:bg-[#b00f20] text-white font-bold text-sm px-7 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            <span>EXPLORAR DESTINOS</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+
+          <div class="font-script-caribbean text-2xl text-white drop-shadow-md flex items-center gap-1.5">
+            <span>República Dominicana 🇩🇴 ♡</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 4 TARJETAS DE CATEGORÍA RÁPIDA (Idéntico a imagen referencia)  -->
+  <!-- ============================================================== -->
+  <section class="relative -mt-10 z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a href="#destinos-destacados" class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col items-center text-center">
+        <div class="w-14 h-14 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <i data-lucide="palmtree" class="w-7 h-7"></i>
+        </div>
+        <h3 class="font-serif-title text-lg font-bold text-slate-900 mb-1" id="t-cat-dest">Destinos</h3>
+        <p class="text-xs text-slate-500 mb-4" id="t-cat-dest-desc">Playas, ciudades y lugares turísticos.</p>
+        <span class="text-xs font-semibold text-sky-600 group-hover:text-sky-700 inline-flex items-center gap-1 mt-auto">
+          Ver más →
+        </span>
+      </a>
+
+      <a href="#provincias-31" class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col items-center text-center">
+        <div class="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <i data-lucide="mountain" class="w-7 h-7"></i>
+        </div>
+        <h3 class="font-serif-title text-lg font-bold text-slate-900 mb-1" id="t-cat-nat">Naturaleza</h3>
+        <p class="text-xs text-slate-500 mb-4" id="t-cat-nat-desc">Ríos, montañas, cascadas y parques.</p>
+        <span class="text-xs font-semibold text-emerald-600 group-hover:text-emerald-700 inline-flex items-center gap-1 mt-auto">
+          Ver más →
+        </span>
+      </a>
+
+      <a href="#cultura" class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col items-center text-center">
+        <div class="w-14 h-14 rounded-full bg-rose-50 text-[#ce1126] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <i data-lucide="music" class="w-7 h-7"></i>
+        </div>
+        <h3 class="font-serif-title text-lg font-bold text-slate-900 mb-1" id="t-cat-cult">Cultura</h3>
+        <p class="text-xs text-slate-500 mb-4" id="t-cat-cult-desc">Tradiciones, música, arte y festividades.</p>
+        <span class="text-xs font-semibold text-[#ce1126] group-hover:text-[#b00f20] inline-flex items-center gap-1 mt-auto">
+          Ver más →
+        </span>
+      </a>
+
+      <a href="#sabores-tierra" class="group bg-white rounded-2xl p-6 shadow-md hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col items-center text-center">
+        <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <i data-lucide="utensils" class="w-7 h-7"></i>
+        </div>
+        <h3 class="font-serif-title text-lg font-bold text-slate-900 mb-1" id="t-cat-gast">Gastronomía</h3>
+        <p class="text-xs text-slate-500 mb-4" id="t-cat-gast-desc">Sabores únicos de nuestra tierra.</p>
+        <span class="text-xs font-semibold text-amber-600 group-hover:text-amber-700 inline-flex items-center gap-1 mt-auto">
+          Ver más →
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- DESTINOS DESTACADOS (Punta Cana, Samaná, Jarabacoa, Sto Dgo)     -->
+  <!-- ============================================================== -->
+  <section id="destinos-destacados" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 w-full">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+      <div class="flex items-center gap-2">
+        <i data-lucide="map-pin" class="w-6 h-6 text-[#002f6c]"></i>
+        <h2 id="t-dest-title" class="font-serif-title text-2xl sm:text-3xl font-bold text-[#002f6c]">
+          Destinos destacados
+        </h2>
+      </div>
+      <a href="#provincias-31" class="text-xs font-bold text-[#002f6c] hover:text-[#ce1126] transition-colors inline-flex items-center gap-1">
+        Ver todos los destinos →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Punta Cana -->
+      <div onclick="openProvinceModal('la-altagracia')" class="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-1">
+        <img src="https://images.pexels.com/photos/10490906/pexels-photo-10490906.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Punta Cana" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+          <div>
+            <h3 class="font-serif-title text-xl font-bold text-white leading-tight">Punta Cana</h3>
+            <p class="text-xs text-white/90">Playas de ensueño y diversión</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-white group-hover:text-[#002f6c] transition-all">
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Samaná -->
+      <div onclick="openProvinceModal('samana')" class="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-1">
+        <img src="https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Samaná" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+          <div>
+            <h3 class="font-serif-title text-xl font-bold text-white leading-tight">Samaná</h3>
+            <p class="text-xs text-white/90">Naturaleza y aventura</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-white group-hover:text-[#002f6c] transition-all">
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jarabacoa -->
+      <div onclick="openProvinceModal('la-vega')" class="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-1">
+        <img src="https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Jarabacoa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+          <div>
+            <h3 class="font-serif-title text-xl font-bold text-white leading-tight">Jarabacoa</h3>
+            <p class="text-xs text-white/90">Montañas y ríos</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-white group-hover:text-[#002f6c] transition-all">
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Santo Domingo -->
+      <div onclick="openProvinceModal('distrito-nacional')" class="group relative h-80 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all cursor-pointer transform hover:-translate-y-1">
+        <img src="https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Santo Domingo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-5 left-5 right-5 flex items-end justify-between">
+          <div>
+            <h3 class="font-serif-title text-xl font-bold text-white leading-tight">Santo Domingo</h3>
+            <p class="text-xs text-white/90">Historia y cultura</p>
+          </div>
+          <div class="w-8 h-8 rounded-full bg-white/30 backdrop-blur-md text-white flex items-center justify-center group-hover:bg-white group-hover:text-[#002f6c] transition-all">
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- "UN RINCÓN POR DESCUBRIR" (Idéntico a imagen 2 y 4 referencia)  -->
+  <!-- ============================================================== -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+    <div class="relative bg-gradient-to-r from-sky-50 via-white to-amber-50 rounded-3xl overflow-hidden shadow-lg border border-slate-200/70 p-6 sm:p-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 relative rounded-2xl overflow-hidden shadow-md group">
+          <img src="https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Mirador de Montaña Dominicano" class="w-full h-72 sm:h-80 object-cover group-hover:scale-105 transition-transform duration-700" />
+          <div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md text-white font-script-caribbean px-3 py-1.5 rounded-full text-base">
+            Lugares que no te puedes perder ♡
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 flex flex-col items-start">
+          <div class="inline-flex items-center gap-2 text-sky-800 text-xs font-bold uppercase tracking-wider mb-2">
+            <i data-lucide="mountain" class="w-4 h-4 text-[#002f6c]"></i>
+            <span id="t-hidden-sub">Un rincón por descubrir</span>
+          </div>
+          <h2 id="t-hidden-title" class="font-serif-title text-2xl sm:text-3xl font-bold text-[#002f6c] leading-tight mb-4">
+            Hay mucho más que las playas
+          </h2>
+          <p id="t-hidden-desc" class="text-sm sm:text-base text-slate-600 leading-relaxed mb-6">
+            Desde pequeños pueblos hasta ríos escondidos, República Dominicana tiene historias, paisajes y experiencias esperando ser conocidas.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <a href="#provincias-31" class="bg-[#002f6c] hover:bg-[#0b2545] text-white font-semibold text-xs sm:text-sm px-6 py-3 rounded-full transition-all shadow-md inline-flex items-center gap-2">
+              <span id="t-hidden-btn">Descubrir más →</span>
+            </a>
+            <span class="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+              <i data-lucide="compass" class="w-4 h-4 text-[#ce1126]"></i>
+              Explora las 31 Provincias y su gastronomía
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- "SABORES DE NUESTRA TIERRA" (Bandera, Mangú, Sancocho, Mofongo)-->
+  <!-- ============================================================== -->
+  <section id="sabores-tierra" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+      <div class="flex items-center gap-2">
+        <i data-lucide="utensils" class="w-6 h-6 text-[#002f6c]"></i>
+        <h2 id="t-food-title" class="font-serif-title text-2xl sm:text-3xl font-bold text-[#002f6c]">
+          Sabores de nuestra tierra
+        </h2>
+      </div>
+      <a href="#provincias-31" class="text-xs font-bold text-[#002f6c] hover:text-[#ce1126] transition-colors inline-flex items-center gap-1">
+        Ver toda la gastronomía →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Dish 1: Bandera -->
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col">
+        <div class="relative h-48 overflow-hidden bg-slate-100">
+          <img src="https://images.pexels.com/photos/27556972/pexels-photo-27556972.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="La Bandera Dominicana" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <span class="absolute top-3 left-3 bg-[#ce1126] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">Plato Nacional 🇩🇴</span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="font-serif-title text-base font-bold text-slate-900 group-hover:text-[#002f6c] transition-colors">La Bandera Dominicana</h3>
+            <p class="text-xs text-slate-500 font-medium mb-2">Nuestro plato típico.</p>
+            <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">Arroz blanco, habichuelas rojas guisadas, carne sazonada con tostones y ensalada verde.</p>
+          </div>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#002f6c] font-semibold">
+            <span>Almuerzo Tradicional</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dish 2: Mangú -->
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col">
+        <div class="relative h-48 overflow-hidden bg-slate-100">
+          <img src="https://images.pexels.com/photos/4112348/pexels-photo-4112348.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Mangú con Los Tres Golpes" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <span class="absolute top-3 left-3 bg-[#002f6c] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">Desayuno Criollo</span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="font-serif-title text-base font-bold text-slate-900 group-hover:text-[#002f6c] transition-colors">Mangú</h3>
+            <p class="text-xs text-slate-500 font-medium mb-2">Tradición en el desayuno.</p>
+            <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">Puré de plátanos verdes con cebollitas encurtidas, queso frito, salami y huevos fritos al gusto.</p>
+          </div>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#002f6c] font-semibold">
+            <span>Los Tres Golpes</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dish 3: Sancocho -->
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col">
+        <div class="relative h-48 overflow-hidden bg-slate-100">
+          <img src="https://images.pexels.com/photos/37065023/pexels-photo-37065023.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Sancocho Dominicano" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <span class="absolute top-3 left-3 bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">Sabor de Fiesta</span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="font-serif-title text-base font-bold text-slate-900 group-hover:text-[#002f6c] transition-colors">Sancocho</h3>
+            <p class="text-xs text-slate-500 font-medium mb-2">Sabor y tradición.</p>
+            <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">Guiso espeso de carnes variadas con víveres criollos (yuca, plátano, auyama) y aguacate.</p>
+          </div>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#002f6c] font-semibold">
+            <span>Guiso Imperial</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dish 4: Mofongo -->
+      <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all transform hover:-translate-y-1 flex flex-col">
+        <div class="relative h-48 overflow-hidden bg-slate-100">
+          <img src="https://images.pexels.com/photos/27556971/pexels-photo-27556971.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Mofongo Mocano" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <span class="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">Clásico Cibaeño</span>
+        </div>
+        <div class="p-5 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="font-serif-title text-base font-bold text-slate-900 group-hover:text-[#002f6c] transition-colors">Mofongo</h3>
+            <p class="text-xs text-slate-500 font-medium mb-2">Un clásico dominicano.</p>
+            <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed mb-4">Plátano frito machacado en pilón de madera con ajo, chicharrón crujiente y caldo casero caliente.</p>
+          </div>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#002f6c] font-semibold">
+            <span>Especialidad en Pilón</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- "VIVE NUESTRA CULTURA" (Bailarina, Carnaval, Merengue)         -->
+  <!-- ============================================================== -->
+  <section id="cultura" class="relative w-full bg-[#002f6c] text-white overflow-hidden py-14">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-[#ce1126]/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-4 relative flex justify-center">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 transform -rotate-1 hover:rotate-0 transition-transform max-w-sm">
+            <img src="https://images.pexels.com/photos/23638372/pexels-photo-23638372.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800" alt="Bailarina folklórica dominicana" class="w-full h-80 object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-3 text-white text-xs font-semibold">
+              🇩🇴 Traje típico tricolor dominicano
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8 flex flex-col justify-center">
+          <div class="inline-flex items-center gap-2 text-rose-300 text-xs font-bold uppercase tracking-wider mb-2">
+            <i data-lucide="music" class="w-4 h-4 text-white"></i>
+            <span id="t-cult-sub">Vive nuestra cultura</span>
+          </div>
+          <h2 id="t-cult-title" class="font-serif-title text-2xl sm:text-4xl font-bold text-white mb-3 leading-tight">
+            Nuestra gente, nuestras tradiciones y nuestra música hacen de la República Dominicana un lugar único.
+          </h2>
+          <p id="t-cult-desc" class="text-sm sm:text-base text-white/90 leading-relaxed mb-6 max-w-xl">
+            Siente el repique de la tambora, la güira y la alegría contagiosa del merengue y la bachata, Patrimonio Cultural Inmaterial de la Humanidad por la UNESCO.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4 mb-6">
+            <div class="bg-white text-slate-800 p-2 pb-3 rounded-lg shadow-xl transform rotate-2 hover:rotate-0 transition-transform w-28">
+              <img src="https://images.pexels.com/photos/13722651/pexels-photo-13722651.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Carnaval Dominicano" class="w-full h-20 object-cover rounded" />
+              <p class="text-[10px] font-bold text-center mt-1 text-slate-700">Carnaval</p>
+            </div>
+            <div class="bg-white text-slate-800 p-2 pb-3 rounded-lg shadow-xl transform -rotate-3 hover:rotate-0 transition-transform w-28">
+              <img src="https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Zona Colonial" class="w-full h-20 object-cover rounded" />
+              <p class="text-[10px] font-bold text-center mt-1 text-slate-700">Historia</p>
+            </div>
+            <div class="bg-white text-slate-800 p-2 pb-3 rounded-lg shadow-xl transform rotate-1 hover:rotate-0 transition-transform w-28">
+              <img src="https://images.pexels.com/photos/36204123/pexels-photo-36204123.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=200&w=200" alt="Tambora Merengue" class="w-full h-20 object-cover rounded" />
+              <p class="text-[10px] font-bold text-center mt-1 text-slate-700">Merengue</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6">
+            <a href="#destinos-destacados" class="bg-white hover:bg-slate-100 text-[#002f6c] font-bold text-xs sm:text-sm px-6 py-3 rounded-full transition-all shadow-md inline-flex items-center gap-2">
+              <span id="t-cult-btn">Conocer más →</span>
+            </a>
+            <span class="font-script-caribbean text-2xl text-[#ffe066] drop-shadow">
+              Merengue • Bachata • Tradición ♡
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- EXCURSIONES ORGANIZADAS CON TRANSPORTE & CONTROL DE ASIENTOS   -->
+  <!-- ============================================================== -->
+  <section id="excursiones-organizadas" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+    <div class="bg-gradient-to-r from-[#002f6c] to-[#0b2545] rounded-3xl p-8 sm:p-12 text-white shadow-xl mb-12">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="max-w-2xl">
+          <span class="inline-flex items-center gap-1.5 bg-[#ce1126] text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">
+            <i data-lucide="bus" class="w-3.5 h-3.5"></i> AGENCIA OFICIAL DE EXCURSIONES
+          </span>
+          <h2 class="font-serif-title text-3xl sm:text-4xl font-bold mb-3">
+            Viajes Organizados & Excursiones Grupales
+          </h2>
+          <p class="text-sm sm:text-base text-white/90 leading-relaxed">
+            Viajes programados con transporte turístico regulado (guaguas ejecutivas, minibuses y transporte privado). Reservas para un mínimo de dos personas con comprobación de adultos y menores, pagos simulados y brochures hora por hora.
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button onclick="openModal('modal-lost-item')" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-white/20 transition-all flex items-center justify-center gap-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 text-amber-300"></i>
+            <span>Aviso Objetos Perdidos</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenedor dinámico de excursiones -->
+    <div id="excursions-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- LAS 31 PROVINCIAS + DISTRITO NACIONAL (TODAS LAS 32)           -->
+  <!-- ============================================================== -->
+  <section id="provincias-31" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 text-[#ce1126] text-xs font-bold uppercase tracking-wider mb-2">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          <span>Exploración Territorial Completa</span>
+        </div>
+        <h2 class="font-serif-title text-3xl font-bold text-[#002f6c]">
+          Las 31 Provincias de la República Dominicana
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
+          Haz clic en cualquier provincia para descubrir sus lugares turísticos patrimoniales y restaurantes recomendados para comer.
+        </p>
+      </div>
+
+      <!-- Filtros por región -->
+      <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs font-medium">
+        <button onclick="filterRegion('todas')" id="filter-todas" class="px-3 py-1.5 rounded-xl bg-white text-[#002f6c] font-bold shadow-xs">Todas (32)</button>
+        <button onclick="filterRegion('metropolitana')" id="filter-metropolitana" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900">Metropolitana</button>
+        <button onclick="filterRegion('cibao')" id="filter-cibao" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900">Cibao / Norte</button>
+        <button onclick="filterRegion('sur')" id="filter-sur" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900">Sur Profundo</button>
+        <button onclick="filterRegion('este')" id="filter-este" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900">Este Costero</button>
+      </div>
+    </div>
+
+    <!-- Contenedor dinámico de las 32 provincias -->
+    <div id="provinces-grid-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- ALOJAMIENTOS CON FILTRO EN MODO ESCOLAR                        -->
+  <!-- ============================================================== -->
+  <section id="alojamientos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 text-[#002f6c] text-xs font-bold uppercase tracking-wider mb-2">
+          <i data-lucide="building-2" class="w-4 h-4"></i>
+          <span>Hospedaje & Estancias</span>
+        </div>
+        <h2 class="font-serif-title text-2xl sm:text-3xl font-bold text-[#002f6c]">
+          Alojamientos en República Dominicana
+        </h2>
+        <p class="text-xs text-slate-500 mt-1">
+          Hoteles patrimoniales, eco-lodges de montaña, cabañas ecológicas y estancias verificadas.
+        </p>
+      </div>
+      <div id="edu-hotel-alert" class="hidden bg-amber-100 text-amber-900 text-xs px-3 py-1 rounded-full font-semibold border border-amber-300">
+        🛡️ Alojamientos filtrados para grupos estudiantiles (Sin hoteles de adultos/casinos)
+      </div>
+    </div>
+
+    <div id="accommodations-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- BANNER FINAL DEL ATARDECER CARIBEÑO                            -->
+  <!-- ============================================================== -->
+  <section class="relative w-full h-64 sm:h-72 overflow-hidden flex items-center justify-center">
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      style="background-image: url('https://images.pexels.com/photos/36916578/pexels-photo-36916578.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=500&w=1600');"
+    >
+      <div class="absolute inset-0 bg-gradient-to-t from-[#002f6c]/90 via-black/30 to-[#002f6c]/60"></div>
+    </div>
+
+    <div class="relative text-center text-white px-4 z-10 max-w-2xl">
+      <div class="font-script-caribbean text-4xl sm:text-5xl text-[#ffe066] drop-shadow-lg mb-2">
+        🌴 El Caribe te espera...
+      </div>
+      <h3 class="font-serif-title tracking-[0.2em] text-lg sm:text-xl font-bold uppercase drop-shadow">
+        UN RINCÓN DOMINICANO
+      </h3>
+      <p class="text-xs sm:text-sm text-white/90 mt-2 max-w-lg mx-auto">
+        La hospitalidad de su gente, playas de arena blanca inmaculada y valles montañosos en un solo lugar.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- FOOTER OFICIAL                                                 -->
+  <!-- ============================================================== -->
+  <footer class="bg-[#002f6c] text-white pt-12 pb-8 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-white/10 gap-6">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 text-white border border-white/20">
+            <i data-lucide="palmtree" class="w-6 h-6"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-serif-title text-xl font-bold tracking-tight text-white leading-tight">
+              Un Rincón <span class="text-[#ce1126]">Dominicano</span>
+            </span>
+            <span class="text-[10px] text-white/70">Conoce. Explora. Vive República Dominicana.</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-white/80">
+          <a href="#hero" class="hover:text-white">Inicio</a>
+          <a href="#destinos-destacados" class="hover:text-white">Destinos</a>
+          <a href="#provincias-31" class="hover:text-white">Las 31 Provincias</a>
+          <a href="#cultura" class="hover:text-white">Cultura</a>
+          <a href="#sabores-tierra" class="hover:text-white">Gastronomía</a>
+          <a href="#excursiones-organizadas" class="hover:text-white">Excursiones</a>
+        </div>
+
+        <div class="flex items-center gap-4 text-white/80 text-sm">
+          <a href="#" class="hover:text-white"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white"><i data-lucide="facebook" class="w-4 h-4"></i></a>
+          <a href="#" class="hover:text-white"><i data-lucide="youtube" class="w-4 h-4"></i></a>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-4">
+        <p>© 2025 - 2026 El Rincón Dominicano. Todos los derechos reservados.</p>
+        <p class="font-script-caribbean text-lg text-white/90">
+          República Dominicana, siempre en el corazón 🇩🇴 ♡
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: DETALLES DE PROVINCIA (LUGARES + DÓNDE COMER)          -->
+  <!-- ============================================================== -->
+  <div id="modal-province" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="relative h-64 w-full">
+        <img id="prov-modal-img" src="" alt="" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        <button onclick="closeModal('modal-province')" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 text-white hover:bg-black/60 flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="absolute bottom-4 left-6 right-6 text-white">
+          <span id="prov-modal-badge" class="bg-[#ce1126] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-1 inline-block"></span>
+          <h2 id="prov-modal-title" class="font-serif-title text-2xl sm:text-3xl font-bold"></h2>
+          <p id="prov-modal-capital" class="text-xs text-white/90"></p>
+        </div>
+      </div>
+      <div class="p-6 sm:p-8 space-y-6">
+        <div>
+          <h3 class="font-bold text-sm text-slate-900 mb-2">Sobre esta provincia</h3>
+          <p id="prov-modal-desc" class="text-xs sm:text-sm text-slate-600 leading-relaxed"></p>
+        </div>
+        <!-- Lugares turísticos de la provincia -->
+        <div class="pt-4 border-t border-slate-100">
+          <h3 class="font-serif-title text-base font-bold text-[#002f6c] mb-3 flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-[#ce1126]"></i> Lugares turísticos destacados
+          </h3>
+          <div id="prov-modal-places" class="space-y-4"></div>
+        </div>
+        <!-- Restaurantes / Dónde comer -->
+        <div class="pt-4 border-t border-slate-100">
+          <h3 class="font-serif-title text-base font-bold text-[#002f6c] mb-3 flex items-center gap-2">
+            <i data-lucide="utensils" class="w-4 h-4 text-amber-600"></i> Dónde comer en esta provincia
+          </h3>
+          <div id="prov-modal-restaurants" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: BROCHURE DIGITAL (CRONOGRAMA HORA POR HORA)             -->
+  <!-- ============================================================== -->
+  <div id="modal-brochure" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="relative bg-gradient-to-r from-[#002f6c] to-[#0b2545] text-white p-6 sm:p-8 rounded-t-3xl">
+        <button onclick="closeModal('modal-brochure')" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="bg-[#ce1126] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">Brochure Digital Oficial</span>
+          <span class="text-xs text-white/80">Código: ERD-BR-2025</span>
+        </div>
+        <h2 id="brochure-title" class="font-serif-title text-2xl sm:text-3xl font-bold mb-2"></h2>
+        <p id="brochure-desc" class="text-xs sm:text-sm text-white/90 max-w-2xl leading-relaxed"></p>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-4 border-t border-white/20 text-xs">
+          <div>
+            <span class="text-white/60 block text-[10px] uppercase">Destino</span>
+            <span id="brochure-dest" class="font-bold"></span>
+          </div>
+          <div>
+            <span class="text-white/60 block text-[10px] uppercase">Transporte</span>
+            <span id="brochure-transport" class="font-bold capitalize"></span>
+          </div>
+          <div>
+            <span class="text-white/60 block text-[10px] uppercase">Horario</span>
+            <span id="brochure-time" class="font-bold"></span>
+          </div>
+          <div>
+            <span class="text-white/60 block text-[10px] uppercase">Precio Por Persona</span>
+            <span id="brochure-price" class="font-bold text-amber-300"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 sm:p-8 space-y-8">
+        <div>
+          <h3 class="font-serif-title text-lg font-bold text-[#002f6c] mb-1 flex items-center gap-2">
+            <i data-lucide="clock" class="w-5 h-5 text-[#ce1126]"></i> Cronograma Programado de Actividades
+          </h3>
+          <p class="text-xs text-slate-500 mb-6">*Los horarios son estimados y pueden ajustarse por tránsito o clima.</p>
+          <div id="brochure-timeline" class="relative border-l-2 border-sky-200 ml-4 space-y-6"></div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+          <div class="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100">
+            <h4 class="font-bold text-xs text-emerald-900 uppercase tracking-wider mb-3">✓ Qué Incluye Esta Excursión</h4>
+            <ul id="brochure-includes" class="space-y-1.5 text-xs text-slate-700"></ul>
+          </div>
+          <div class="bg-rose-50/50 p-5 rounded-2xl border border-rose-100">
+            <h4 class="font-bold text-xs text-rose-900 uppercase tracking-wider mb-3">✕ Qué No Incluye</h4>
+            <ul id="brochure-not-includes" class="space-y-1.5 text-xs text-slate-700"></ul>
+          </div>
+        </div>
+
+        <div class="bg-amber-50/60 p-5 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2">
+          <h4 class="font-bold uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-amber-700"></i> Reglas de Seguridad & Acompañamiento de Menores
+          </h4>
+          <p>• <strong>Mínimo de pasajeros:</strong> Las reservas se realizan para 2 o más personas.</p>
+          <p>• <strong>Menores de edad:</strong> Todo menor de edad debe viajar en compañía y bajo supervisión obligatoria de un adulto responsable.</p>
+          <p>• <strong>Aviso sobre objetos personales:</strong> Cada pasajero debe cuidar y vigilar sus pertenencias (teléfonos, cámaras, mochilas). En caso de olvido, repórtalo en nuestra plataforma.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
+          <button onclick="window.print()" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200">
+            <i data-lucide="printer" class="w-4 h-4 inline mr-1"></i> Imprimir Brochure
+          </button>
+          <button id="brochure-book-btn" class="bg-[#002f6c] hover:bg-[#0b2545] text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-full shadow-md">
+            Proceder a Reservar Asientos →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: RESERVA Y PAGO SIMULADO (MÍN 2 PAX, ADULTO OBLIGATORIO) -->
+  <!-- ============================================================== -->
+  <div id="modal-booking" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="relative bg-gradient-to-r from-[#002f6c] to-[#0b2545] text-white p-6 rounded-t-3xl">
+        <button onclick="closeModal('modal-booking')" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-300">Paso de Reserva & Pago Simulado</span>
+        <h2 id="booking-exc-title" class="font-serif-title text-xl sm:text-2xl font-bold"></h2>
+        <p id="booking-exc-seats" class="text-xs text-white/80 mt-1"></p>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <!-- Éxito de la reserva -->
+        <div id="booking-success-box" class="hidden text-center py-6 space-y-4">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+            <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+          </div>
+          <h3 class="font-serif-title text-2xl font-bold text-slate-900">¡Reserva Registrada con Éxito!</h3>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 max-w-md mx-auto text-center">
+            <span class="text-xs text-slate-500 block">Código Único de Reserva:</span>
+            <span id="booking-success-code" class="font-mono text-2xl font-bold text-[#ce1126] tracking-wider block mt-1"></span>
+            <span class="inline-block mt-2 bg-amber-100 text-amber-800 text-[11px] font-bold px-3 py-1 rounded-full">
+              Estado: PENDIENTE DE CONFIRMACIÓN ADMINISTRATIVA
+            </span>
+          </div>
+          <p class="text-xs text-slate-600 max-w-md mx-auto">
+            Hemos procesado el pago simulado. Nuestro equipo administrativo revisará y confirmará la disponibilidad.
+          </p>
+          <div class="pt-4 flex justify-center gap-3">
+            <button onclick="closeModal('modal-booking'); openModal('modal-reservas');" class="bg-[#002f6c] text-white text-xs font-bold px-6 py-2.5 rounded-full shadow">
+              Ver en Mis Reservas
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulario de Reserva -->
+        <form id="booking-form" onsubmit="submitBooking(event)" class="space-y-6">
+          <div id="booking-error-msg" class="hidden bg-rose-50 border border-rose-200 text-rose-800 text-xs p-3.5 rounded-xl"></div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-xs text-slate-900">Cantidad de Pasajeros</h4>
+                <p class="text-[11px] text-slate-500">Mínimo obligatorio: 2 personas</p>
+              </div>
+              <span id="booking-passengers-badge" class="text-xs font-bold text-[#ce1126] bg-rose-50 px-2 py-0.5 rounded">Total: 2</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Total Pasajeros (Mín 2)</label>
+                <input type="number" id="book-total-pax" min="2" max="50" value="2" onchange="updatePaxDistribution()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 font-bold text-center" required />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Adultos</label>
+                <input type="number" id="book-adults-pax" min="1" max="50" value="2" onchange="updatePaxDistribution()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 font-bold text-center" required />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Menores de Edad</label>
+                <input type="number" id="book-minors-pax" min="0" max="49" value="0" onchange="updatePaxDistribution()" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 font-bold text-center" />
+              </div>
+            </div>
+
+            <div id="responsible-adult-box" class="hidden bg-amber-50 border border-amber-200 p-3.5 rounded-xl space-y-3">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-amber-900">
+                <i data-lucide="shield-check" class="w-4 h-4 text-amber-700"></i>
+                <span>Adulto o Tutor Responsable (Requerido al viajar con menores)</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="text" id="book-adult-name" placeholder="Nombre completo del Adulto" class="text-xs p-2.5 rounded-xl border border-amber-300 bg-white" />
+                <input type="text" id="book-adult-phone" placeholder="Teléfono / Cédula del Adulto" class="text-xs p-2.5 rounded-xl border border-amber-300 bg-white" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Punto de Recogida</label>
+            <select id="book-pickup-select" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white"></select>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="credit-card" class="w-4 h-4 text-[#002f6c]"></i>
+                <h4 class="font-bold text-xs text-slate-900">Pasarela de Pago Simulado</h4>
+              </div>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Simulación Segura</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" value="4532 •••• •••• 8892" class="text-xs p-2.5 rounded-xl border border-slate-300 bg-white sm:col-span-2 font-mono" readonly />
+              <input type="text" value="12/28 - 321" class="text-xs p-2.5 rounded-xl border border-slate-300 bg-white text-center font-mono" readonly />
+            </div>
+          </div>
+
+          <label class="flex items-start gap-2.5 text-xs text-slate-600 cursor-pointer">
+            <input type="checkbox" id="book-accept-rules" class="mt-0.5 rounded text-[#002f6c]" required />
+            <span>Acepto el aviso sobre el cuidado de objetos personales y confirmo que los menores de edad estarán supervisados por un adulto responsable durante toda la excursión.</span>
+          </label>
+
+          <div class="pt-4 border-t border-slate-200 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-slate-500 block">Total a Pagar (Simulado):</span>
+              <span id="booking-total-display" class="text-xl font-bold text-[#ce1126]"></span>
+            </div>
+            <button type="submit" class="bg-[#ce1126] hover:bg-[#b00f20] text-white text-xs sm:text-sm font-bold px-6 py-3 rounded-full shadow-lg transition-all">
+              Confirmar Reserva y Pagar →
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: MIS RESERVAS                                            -->
+  <!-- ============================================================== -->
+  <div id="modal-reservas" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="bg-[#002f6c] text-white p-6 rounded-t-3xl flex items-center justify-between">
+        <div>
+          <h2 class="font-serif-title text-xl font-bold flex items-center gap-2">
+            <i data-lucide="calendar" class="w-5 h-5 text-amber-300"></i> Mis Reservas de Excursiones
+          </h2>
+          <p class="text-xs text-white/80">Historial de viajes registrados</p>
+        </div>
+        <button onclick="closeModal('modal-reservas')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="my-bookings-list" class="p-6 space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: ITINERARIO Y FAVORITOS                                  -->
+  <!-- ============================================================== -->
+  <div id="modal-itinerario" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="bg-[#002f6c] text-white p-6 rounded-t-3xl flex items-center justify-between">
+        <div>
+          <h2 class="font-serif-title text-xl font-bold flex items-center gap-2">
+            <i data-lucide="heart" class="w-5 h-5 text-rose-400 fill-rose-400"></i> Mi Itinerario & Favoritos
+          </h2>
+          <p class="text-xs text-white/80">Planifica tus días por la República Dominicana</p>
+        </div>
+        <button onclick="closeModal('modal-itinerario')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-6">
+        <div>
+          <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2">Destinos Guardados</h3>
+          <div id="favorites-container" class="grid grid-cols-2 gap-2"></div>
+        </div>
+        <div class="pt-4 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500">Planificador por Días</h3>
+            <button onclick="addItineraryDay()" class="text-xs font-bold text-[#002f6c] hover:text-[#ce1126]">+ Agregar Día</button>
+          </div>
+          <div id="itinerary-days-container" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: PERFIL & REGISTRO DE CENTRO EDUCATIVO                   -->
+  <!-- ============================================================== -->
+  <div id="modal-profile" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="bg-[#002f6c] text-white p-6 rounded-t-3xl flex items-center justify-between">
+        <div>
+          <h2 class="font-serif-title text-xl font-bold flex items-center gap-2">
+            <i data-lucide="user" class="w-5 h-5 text-amber-300"></i> Registro de Usuario & Centro Educativo
+          </h2>
+          <p class="text-xs text-white/80">Configura tu perfil de viaje o institución escolar</p>
+        </div>
+        <button onclick="closeModal('modal-profile')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Tipo de Cuenta</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" id="btn-acc-turista" onclick="setAccountType('turista')" class="p-3 rounded-2xl border border-[#002f6c] bg-sky-50 text-[#002f6c] font-bold text-center">
+              🏖️ Turista / Viajero
+            </button>
+            <button type="button" id="btn-acc-escuela" onclick="setAccountType('centro_educativo')" class="p-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-center hover:bg-slate-50">
+              🎓 Centro Educativo
+            </button>
+          </div>
+        </div>
+
+        <div id="school-name-field" class="hidden">
+          <label class="block font-bold text-slate-700 mb-1">Nombre del Centro Educativo o Colegio</label>
+          <input type="text" id="prof-school-name" placeholder="Ej. Colegio Loyola / Liceo República de Argentina" class="w-full p-2.5 rounded-xl border border-slate-300" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Nombre Completo</label>
+            <input type="text" id="prof-name" value="Prof. Carlos Méndez" class="w-full p-2.5 rounded-xl border border-slate-300" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Correo Electrónico</label>
+            <input type="email" id="prof-email" value="contacto@colegiosanjudas.edu.do" class="w-full p-2.5 rounded-xl border border-slate-300" />
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <button onclick="saveUserProfile()" class="bg-[#002f6c] hover:bg-[#0b2545] text-white font-bold px-6 py-2.5 rounded-full shadow">
+            Guardar y Aplicar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: REPORTE DE OBJETO EXTRAVIADO                            -->
+  <!-- ============================================================== -->
+  <div id="modal-lost-item" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200">
+      <div class="bg-[#002f6c] text-white p-6 rounded-t-3xl flex items-center justify-between">
+        <div>
+          <h2 class="font-serif-title text-lg font-bold flex items-center gap-2">
+            <i data-lucide="alert-circle" class="w-5 h-5 text-amber-400"></i> Reporte de Objeto Extraviado
+          </h2>
+          <p class="text-xs text-white/80">Comunícalo a nuestro equipo logístico de transporte</p>
+        </div>
+        <button onclick="closeModal('modal-lost-item')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <form id="lost-form" onsubmit="submitLostItem(event)" class="space-y-4 text-xs">
+          <div id="lost-success-box" class="hidden text-center py-4 text-emerald-700 font-bold bg-emerald-50 rounded-xl">
+            ✓ ¡Reporte recibido! Nuestro equipo de transporte revisará el vehículo.
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Excursión o Lugar</label>
+            <input type="text" id="lost-exc" placeholder="Ej. Eco-Aventura Jarabacoa / Guagua #3" class="w-full p-2.5 rounded-xl border border-slate-300" required />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Descripción del Objeto</label>
+            <textarea id="lost-desc" placeholder="Ej. Lentes de sol marca Ray-Ban estuche negro" rows="3" class="w-full p-2.5 rounded-xl border border-slate-300" required></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="lost-name" placeholder="Tu Nombre" class="p-2.5 rounded-xl border border-slate-300" required />
+            <input type="text" id="lost-contact" placeholder="Teléfono o Correo" class="p-2.5 rounded-xl border border-slate-300" required />
+          </div>
+          <div class="pt-2 flex justify-end gap-2">
+            <button type="submit" class="bg-[#002f6c] hover:bg-[#0b2545] text-white font-bold px-5 py-2.5 rounded-xl shadow">
+              Enviar Reporte
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: PANEL ADMINISTRATIVO                                    -->
+  <!-- ============================================================== -->
+  <div id="modal-admin" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+      <div class="bg-[#0b2545] text-white p-6 rounded-t-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-[#ce1126] text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Acceso Administrativo</span>
+          <h2 class="font-serif-title text-xl font-bold mt-1">Panel de Control Turístico & Confirmación de Reservas</h2>
+        </div>
+        <button onclick="closeModal('modal-admin')" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-6">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="bg-sky-50 p-4 rounded-2xl border border-sky-100">
+            <span class="text-sky-800 font-semibold block">Provincias</span>
+            <span class="text-2xl font-bold text-[#002f6c]">32</span>
+          </div>
+          <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+            <span class="text-emerald-800 font-semibold block">Destinos Registrados</span>
+            <span class="text-2xl font-bold text-emerald-700">34</span>
+          </div>
+          <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+            <span class="text-amber-800 font-semibold block">Restaurantes Registrados</span>
+            <span class="text-2xl font-bold text-amber-700">33</span>
+          </div>
+          <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+            <span class="text-purple-800 font-semibold block">Excursiones Activas</span>
+            <span class="text-2xl font-bold text-purple-700">5</span>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-sm text-slate-900 mb-3">Administración de Reservas de Turistas y Escuelas</h3>
+          <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[10px]">
+                <tr>
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Cliente / Escuela</th>
+                  <th class="p-3">Excursión</th>
+                  <th class="p-3">Pasajeros</th>
+                  <th class="p-3">Total</th>
+                  <th class="p-3">Estado</th>
+                  <th class="p-3 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="admin-bookings-table" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: TODOS LOS DATOS (31 PROVINCIAS, DESTINOS, ETC.)    -->
+  <!-- ============================================================== -->
+  <script>
+    let currentLang = 'es';
+    let currentCurrency = 'RD';
+    let educationalMode = false;
+    let selectedRegion = 'todas';
+    let searchQuery = '';
+
+    // BASE DE DATOS COMPLETA DE LAS 32 DEMARCACIONES DOMINICANAS
+    const PROVINCES = [
+      { slug: "distrito-nacional", name: "Distrito Nacional (Santo Domingo)", region: "Metropolitana", capital: "Santo Domingo", description: "Cuna de América, primera ciudad fundada en el Nuevo Mundo con su emblemática Zona Colonial, palacios virreinales, museos y el Malecón.", image: "https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "santo-domingo", name: "Santo Domingo (Provincia)", region: "Metropolitana", capital: "Santo Domingo Este", description: "Hogar de maravillas subterráneas como Los Tres Ojos, el Faro a Colón, el Acuario Nacional y el Parque Mirador del Este.", image: "https://images.pexels.com/photos/12321837/pexels-photo-12321837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "la-altagracia", name: "La Altagracia", region: "Este", capital: "Salvaleón de Higüey", description: "Punta Cana, Bávaro, Playa Macao y la Basílica de la Virgen de la Altagracia.", image: "https://images.pexels.com/photos/10490906/pexels-photo-10490906.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: false },
+      { slug: "samana", name: "Samaná", region: "Cibao", capital: "Santa Bárbara de Samaná", description: "Santuario natural de ballenas jorobadas, espectaculares cascadas tropicales como El Limón y playas vírgenes en Las Terrenas.", image: "https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "la-vega", name: "La Vega", region: "Cibao", capital: "Concepción de La Vega", description: "Capital del ecoturismo de montaña, río y pino: Jarabacoa y Constanza, cascadas Jimenoa y Baiguate.", image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "santiago", name: "Santiago", region: "Cibao", capital: "Santiago de los Caballeros", description: "El corazón del Cibao: Monumento a los Héroes de la Restauración y Centro León Jiménez.", image: "https://images.pexels.com/photos/17059628/pexels-photo-17059628.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "puerto-plata", name: "Puerto Plata", region: "Cibao", capital: "San Felipe de Puerto Plata", description: "La novia del Atlántico: Fortaleza San Felipe, teleférico de la Loma Isabel de Torres y 27 Charcos de Damajagua.", image: "https://images.pexels.com/photos/18387034/pexels-photo-18387034.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "barahona", name: "Barahona", region: "Sur", capital: "Santa Cruz de Barahona", description: "La Perla del Sur donde convergen las montañas verdes con el mar turquesa en Los Patos y San Rafael.", image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "pedernales", name: "Pedernales", region: "Sur", capital: "Pedernales", description: "El tesoro virgen más impresionante del Caribe: Bahía de las Águilas y Parque Jaragua.", image: "https://images.pexels.com/photos/1030322/pexels-photo-1030322.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "montecristi", name: "Montecristi", region: "Cibao", capital: "San Fernando de Montecristi", description: "Tierra del emblemático Morro de Montecristi, salinas naturales y manglares exuberantes.", image: "https://images.pexels.com/photos/31734268/pexels-photo-31734268.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "la-romana", name: "La Romana", region: "Este", capital: "La Romana", description: "Elegancia colonial en Altos de Chavón y catamarán hacia la paradisíaca Isla Saona.", image: "https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "san-pedro-de-macoris", name: "San Pedro de Macorís", region: "Este", capital: "San Pedro de Macorís", description: "Tierra de poetas y la asombrosa Cueva de las Maravillas con arte rupestre taíno.", image: "https://images.pexels.com/photos/32129164/pexels-photo-32129164.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "peravia", name: "Peravia", region: "Sur", capital: "Baní", description: "La capital del mango y la sal marina: Monumento Natural Dunas de Baní y Bahía de las Calderas.", image: "https://images.pexels.com/photos/36916578/pexels-photo-36916578.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "san-cristobal", name: "San Cristóbal", region: "Sur", capital: "San Cristóbal", description: "Cuna de la Constitución, Cuevas del Pomier con miles de pictografías y Balneario La Toma.", image: "https://images.pexels.com/photos/12321837/pexels-photo-12321837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "azua", name: "Azua", region: "Sur", capital: "Azua de Compostela", description: "Tierra histórica de gestas patrióticas y aguas calmas en Bahía de Ocoa y Playa Caobita.", image: "https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "el-seibo", name: "El Seibo", region: "Este", capital: "Santa Cruz de El Seibo", description: "Hogar de Montaña Redonda con columpios al infinito hacia la bahía de Miches.", image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "hato-mayor", name: "Hato Mayor", region: "Este", capital: "Hato Mayor del Rey", description: "Primera provincia ecoturística: Parque Nacional Los Haitises desde Sabana de la Mar.", image: "https://images.pexels.com/photos/32182187/pexels-photo-32182187.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "maria-trinidad-sanchez", name: "María Trinidad Sánchez", region: "Cibao", capital: "Nagua", description: "Playas doradas de Cabrera, Playa Grande, Cabo Francés Viejo y la Laguna Dudú.", image: "https://images.pexels.com/photos/10490906/pexels-photo-10490906.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "espaillat", name: "Espaillat", region: "Cibao", capital: "Moca", description: "La Villa Heroica: famosa por su mofongo en pilón y el Templo Sagrado Corazón.", image: "https://images.pexels.com/photos/27556971/pexels-photo-27556971.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "monte-plata", name: "Monte Plata", region: "Este", capital: "Monte Plata", description: "La Provincia Esmeralda de cascadas cristalinas: Salto Alto de Bayaguana y Salto de Socoa.", image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "san-juan", name: "San Juan", region: "Sur", capital: "San Juan de la Maguana", description: "El Granero del Sur: Centro ceremonial Corral de los Indios del cacique Caonabo.", image: "https://images.pexels.com/photos/17377211/pexels-photo-17377211.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "monesenor-nouel", name: "Monseñor Nouel", region: "Cibao", capital: "Bonao", description: "La Villa de las Hortensias: Saltos de Jima y Plaza de la Cultura de Cándido Bidó.", image: "https://images.pexels.com/photos/32129164/pexels-photo-32129164.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "sanchez-ramirez", name: "Sánchez Ramírez", region: "Cibao", capital: "Cotuí", description: "Tierra de piñas y el gran lago artificial de la Presa de Hatillo con paseos en ferry.", image: "https://images.pexels.com/photos/12321837/pexels-photo-12321837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "valverde", name: "Valverde", region: "Cibao", capital: "Santa Cruz de Mao", description: "La Ciudad de los Bellos Atardeceres: Balneario Poza de Boquerón y ríos de la Línea Noroeste.", image: "https://images.pexels.com/photos/36916578/pexels-photo-36916578.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "santiago-rodriguez", name: "Santiago Rodríguez", region: "Cibao", capital: "San Ignacio de Sabaneta", description: "Cuna de la Restauración de 1863, Presa de Monción y la tradición del casabe artesanal.", image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "dajabon", name: "Dajabón", region: "Cibao", capital: "Dajabón", description: "Frontera histórica noroeste, Monumento a la Batalla de Beller y Río Masacre.", image: "https://images.pexels.com/photos/17059628/pexels-photo-17059628.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "elias-pina", name: "Elías Piña", region: "Sur", capital: "Comendador", description: "Montañas de la Cordillera Central, Cavernas del Hoyo de San Pedro y Mirador de Bánica.", image: "https://images.pexels.com/photos/8581309/pexels-photo-8581309.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "bahoruco", name: "Bahoruco", region: "Sur", capital: "Neiba", description: "El oasis vitivinícola del Caribe: Balneario Las Marías de manantial frío y uvas de Neiba.", image: "https://images.pexels.com/photos/32182187/pexels-photo-32182187.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "independencia", name: "Independencia", region: "Sur", capital: "Jimaní", description: "El Parque Nacional Lago Enriquillo con cocodrilos americanos e iguanas rinoceronte.", image: "https://images.pexels.com/photos/31734268/pexels-photo-31734268.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "san-jose-de-ocoa", name: "San José de Ocoa", region: "Sur", capital: "San José de Ocoa", description: "Vergel montañoso en las alturas: Mirador Tatón y senderos cafetaleros entre pinos.", image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "hermanas-mirabal", name: "Hermanas Mirabal", region: "Cibao", capital: "Salcedo", description: "Tierra de las Mariposas: Casa Museo Hermanas Mirabal y ruta de murales artísticos.", image: "https://images.pexels.com/photos/19935977/pexels-photo-19935977.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true },
+      { slug: "duarte", name: "Duarte", region: "Cibao", capital: "San Francisco de Macorís", description: "Capital del cacao: Reserva Científica Loma Quita Espuela y Sendero del Cacao Orgánico.", image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", isEducationalHighlight: true }
+    ];
+
+    // DESTINOS TURÍSTICOS POR PROVINCIA
+    const DESTINATIONS = [
+      { provinceSlug: "distrito-nacional", name: "Ciudad Colonial de Santo Domingo", category: "historico", description: "Primer asentamiento europeo permanente en América, declarado Patrimonio de la Humanidad UNESCO. Calles empedradas, Catedral Primada y Alcázar de Colón.", schedule: "08:30 AM - 08:00 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Zona+Colonial+Santo+Domingo" },
+      { provinceSlug: "santo-domingo", name: "Parque Nacional Los Tres Ojos", category: "cueva", description: "Caverna kárstica abierta con tres lagos subterráneos de aguas cristalinas sulfurosas y balsa rústica subterránea.", schedule: "08:30 AM - 05:00 PM", entryFeeRD: 200, entryFeeUSD: 4, image: "https://images.pexels.com/photos/12321837/pexels-photo-12321837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Los+Tres+Ojos+Santo+Domingo" },
+      { provinceSlug: "la-altagracia", name: "Punta Cana & Playa Bávaro", category: "playa", description: "Arena blanca inmaculada, aguas turquesas del Caribe y cocoteros ideales para el descanso y deportes acuáticos.", schedule: "Acceso libre 24h", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/10490906/pexels-photo-10490906.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Playa+Bavaro+Punta+Cana" },
+      { provinceSlug: "samana", name: "Salto El Limón & Cayo Levantado", category: "cascada", description: "Majestuosa cascada de más de 40 metros de altura en la selva tropical de Samaná y playas de Cayo Levantado.", schedule: "08:00 AM - 05:00 PM", entryFeeRD: 250, entryFeeUSD: 5, image: "https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Salto+El+Limon+Samana" },
+      { provinceSlug: "la-vega", name: "Jarabacoa: Salto Jimenoa & Bosques de Pino", category: "montana", description: "Puentes colgantes de madera sobre cañón rocoso, pozas cristalinas del río Yaque del Norte y clima fresco de montaña.", schedule: "08:00 AM - 05:30 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Salto+Jimenoa+Jarabacoa" },
+      { provinceSlug: "santiago", name: "Monumento a los Héroes de la Restauración", category: "historico", description: "Monumento de mármol blanco de 67 metros de altura que domina la ciudad corazón con murales de Vela Zanetti.", schedule: "09:00 AM - 06:30 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/17059628/pexels-photo-17059628.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Monumento+Santiago+Dominicana" },
+      { provinceSlug: "puerto-plata", name: "Loma Isabel de Torres & 27 Charcos", category: "montana", description: "El teleférico del Caribe que sube a 800 metros con el Cristo Redentor y cascadas naturales en Damajagua.", schedule: "08:30 AM - 05:00 PM", entryFeeRD: 500, entryFeeUSD: 10, image: "https://images.pexels.com/photos/18387034/pexels-photo-18387034.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Teleferico+Puerto+Plata" },
+      { provinceSlug: "barahona", name: "Balneario Los Patos & Playa San Rafael", category: "rio", description: "Donde el río más corto del mundo se une con las olas del mar Caribe entre pozas de agua helada y piedras blancas.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Balneario+Los+Patos+Barahona" },
+      { provinceSlug: "pedernales", name: "Bahía de las Águilas (Parque Jaragua)", category: "playa", description: "Playa virgen de 8 kilómetros continuos de arena blanca, agua cristalina y acantilados de piedra caliza roja.", schedule: "08:00 AM - 05:30 PM", entryFeeRD: 300, entryFeeUSD: 6, image: "https://images.pexels.com/photos/1030322/pexels-photo-1030322.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Bahia+de+las+Aguilas+Pedernales" },
+      { provinceSlug: "montecristi", name: "Parque Nacional El Morro de Montecristi", category: "montana", description: "Promontorio rocoso de 242 metros de altura sobre el Atlántico con playa de arena rojiza y senderos panorámicos.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 150, entryFeeUSD: 3, image: "https://images.pexels.com/photos/31734268/pexels-photo-31734268.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=El+Morro+Montecristi" },
+      { provinceSlug: "la-romana", name: "Altos de Chavón & Isla Saona", category: "cultural", description: "Recreación en piedra de una aldea mediterránea del siglo XVI con su anfiteatro griego sobre el río Chavón.", schedule: "08:30 AM - 08:00 PM", entryFeeRD: 500, entryFeeUSD: 10, image: "https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Altos+de+Chavon+La+Romana" },
+      { provinceSlug: "san-pedro-de-macoris", name: "Cueva de las Maravillas", category: "cueva", description: "Caverna kárstica con pasarelas iluminadas, iguanario y cientos de pictografías taínas prehispánicas.", schedule: "09:00 AM - 05:00 PM", entryFeeRD: 300, entryFeeUSD: 6, image: "https://images.pexels.com/photos/32129164/pexels-photo-32129164.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Cueva+de+las+Maravillas+San+Pedro" },
+      { provinceSlug: "peravia", name: "Dunas de Baní & Salinas Rosadas", category: "parque", description: "Montañas de arena fina de 35 metros con vistas al mar Caribe y las salinas de color rosado de Puerto Hermoso.", schedule: "08:00 AM - 05:00 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/36916578/pexels-photo-36916578.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Dunas+de+Bani" },
+      { provinceSlug: "san-cristobal", name: "Cuevas del Pomier & Arte Rupestre", category: "cueva", description: "Mayor concentración de arte rupestre taíno de las Antillas (más de 6,000 pictografías protegidas).", schedule: "08:30 AM - 04:30 PM", entryFeeRD: 150, entryFeeUSD: 3, image: "https://images.pexels.com/photos/12321837/pexels-photo-12321837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Cuevas+del+Pomier" },
+      { provinceSlug: "azua", name: "Bahía de Ocoa & Playa Blanca", category: "playa", description: "Aguas calmas sin oleaje fuerte, fondos de arena clara y colinas áridas del sur dominicano.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Bahia+de+Ocoa+Azua" },
+      { provinceSlug: "el-seibo", name: "Montaña Redonda & Miches", category: "mirador", description: "Cima panorámica de 300 metros con vistas 360 hacia el Atlántico y columpios fotográficos al vacío.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 200, entryFeeUSD: 4, image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Montana+Redonda+Miches" },
+      { provinceSlug: "hato-mayor", name: "Parque Nacional Los Haitises", category: "parque", description: "Mogotes kársticos cónicos que brotan del mar, manglares y cuevas con pictografías aborígenes.", schedule: "08:00 AM - 04:30 PM", entryFeeRD: 300, entryFeeUSD: 6, image: "https://images.pexels.com/photos/32182187/pexels-photo-32182187.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Parque+Nacional+Los+Haitises" },
+      { provinceSlug: "maria-trinidad-sanchez", name: "Laguna Dudú & Playa Grande Cabrera", category: "parque", description: "Cenote de agua dulce azul cobalto con cuevas sumergidas, tirolesa y la dorada Playa Grande.", schedule: "09:00 AM - 05:00 PM", entryFeeRD: 300, entryFeeUSD: 6, image: "https://images.pexels.com/photos/10490906/pexels-photo-10490906.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Laguna+Dudu+Cabrera" },
+      { provinceSlug: "espaillat", name: "Moca Heroica: Templo Sagrado Corazón", category: "cultural", description: "Una de las iglesias neogóticas más hermosas de América con vitrales italianos y cuna del mofongo mocano.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/27556971/pexels-photo-27556971.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Iglesia+Sagrado+Corazon+Moca" },
+      { provinceSlug: "monte-plata", name: "Salto Alto de Bayaguana", category: "cascada", description: "Tres caídas paralelas de agua pura rodeadas de vegetación tropical formando una piscina natural verde esmeralda.", schedule: "08:30 AM - 05:00 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Salto+Alto+Bayaguana" },
+      { provinceSlug: "san-juan", name: "Corral de los Indios (Plaza Ceremonial)", category: "historico", description: "El mayor monumento arqueológico taíno de las Antillas: círculo de 235 metros con piedra ceremonial central.", schedule: "08:00 AM - 05:00 PM", entryFeeRD: 50, entryFeeUSD: 1, image: "https://images.pexels.com/photos/17377211/pexels-photo-17377211.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Corral+de+los+Indios+San+Juan" },
+      { provinceSlug: "monesenor-nouel", name: "Saltos de Jima & Plaza de la Cultura", category: "cascada", description: "Cascadas escalonadas sobre roca basáltica con pasarelas de madera y el museo de arte Cándido Bidó.", schedule: "08:30 AM - 05:00 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/32129164/pexels-photo-32129164.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Saltos+de+Jima+Bonao" },
+      { provinceSlug: "sanchez-ramirez", name: "Presa de Hatillo & Paseos Náuticos", category: "parque", description: "El mayor lago de agua dulce de las Antillas con paseos en ferry, islas interiores y campos de piña dulce.", schedule: "08:00 AM - 05:30 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/12321837/pexels-photo-12321837.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Presa+de+Hatillo+Cotui" },
+      { provinceSlug: "valverde", name: "Balneario Poza de Boquerón Mao", category: "rio", description: "Pozas naturales del río Mao bajo frondosos sauces y los emblemáticos cielos de atardeceres maenses.", schedule: "08:00 AM - 06:30 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/36916578/pexels-photo-36916578.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Mao+Valverde+Dominicana" },
+      { provinceSlug: "santiago-rodriguez", name: "Presa de Monción & Casabe Artesanal", category: "montana", description: "El muro de contención en tierra más alto de América Latina y talleres del casabe tradicional taíno.", schedule: "08:00 AM - 05:30 PM", entryFeeRD: 50, entryFeeUSD: 1, image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Presa+de+Moncion" },
+      { provinceSlug: "dajabon", name: "Monumento Histórico a la Batalla de Beller", category: "historico", description: "Monumento patriótico que conmemora la victoria de 1845 que afianzó la independencia fronteriza nacional.", schedule: "08:00 AM - 05:00 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/17059628/pexels-photo-17059628.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Monumento+Batalla+de+Beller" },
+      { provinceSlug: "elias-pina", name: "Mirador de Bánica & Cerro San Francisco", category: "mirador", description: "Elevación mística en la frontera con gruta natural y vistas hacia el valle de la Cordillera Central.", schedule: "08:00 AM - 05:00 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/8581309/pexels-photo-8581309.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Banica+Elias+Pina" },
+      { provinceSlug: "bahoruco", name: "Balneario Las Marías & Viñedos de Neiba", category: "rio", description: "Oasis de manantial cristalino frío en el valle árido, rodeado de frondosa arboleda y viñedos de uva criolla.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 0, entryFeeUSD: 0, image: "https://images.pexels.com/photos/32182187/pexels-photo-32182187.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Balneario+Las+Marias+Neiba" },
+      { provinceSlug: "independencia", name: "Parque Nacional Lago Enriquillo", category: "parque", description: "El punto más bajo del Caribe (40m bajo nivel del mar), con cocodrilos americanos e iguanas rinoceronte.", schedule: "08:00 AM - 04:30 PM", entryFeeRD: 150, entryFeeUSD: 3, image: "https://images.pexels.com/photos/31734268/pexels-photo-31734268.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Lago+Enriquillo" },
+      { provinceSlug: "san-jose-de-ocoa", name: "Mirador Tatón & Ruta del Café", category: "mirador", description: "Mirador montañoso con niebla matutina, senderos entre pinos y fincas cafetaleras de altura.", schedule: "08:00 AM - 06:00 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Taton+San+Jose+de+Ocoa" },
+      { provinceSlug: "hermanas-mirabal", name: "Casa Museo Hermanas Mirabal Salcedo", category: "museo", description: "Hogar y mausoleo histórico de Patria, Minerva y María Teresa Mirabal, heroínas contra la dictadura.", schedule: "09:00 AM - 05:00 PM", entryFeeRD: 100, entryFeeUSD: 2, image: "https://images.pexels.com/photos/19935977/pexels-photo-19935977.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Casa+Museo+Hermanas+Mirabal" },
+      { provinceSlug: "duarte", name: "Reserva Científica Loma Quita Espuela", category: "parque", description: "Selva nublada tropical con senderos ecológicos comunitarios y talleres interactivos de cacao orgánico.", schedule: "08:00 AM - 04:30 PM", entryFeeRD: 200, entryFeeUSD: 4, image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Loma+Quita+Espuela" }
+    ];
+
+    // RESTAURANTES TÍPICOS POR PROVINCIA (DÓNDE COMER)
+    const RESTAURANTS = [
+      { provinceSlug: "distrito-nacional", name: "Mesón de Bari (Zona Colonial)", cuisineType: "dominicana", priceRange: "$$", description: "Casona colonial con empanadas de catibía, chivo liniero y La Bandera tradicional.", googleMapsUrl: "https://maps.google.com/?q=Meson+de+Bari+Santo+Domingo" },
+      { provinceSlug: "santo-domingo", name: "Boca Marina & Parador del Este", cuisineType: "mariscos", priceRange: "$$", description: "Pescados al vapor, chillo frito y comida criolla frente a la bahía.", googleMapsUrl: "https://maps.google.com/?q=Boca+Marina" },
+      { provinceSlug: "la-altagracia", name: "Capitán Cook & Marisquería Bávaro", cuisineType: "mariscos", priceRange: "$$$", description: "Pescado al coco, tostones recién hechos y langosta frente a las olas.", googleMapsUrl: "https://maps.google.com/?q=Capitan+Cook+Bavaro" },
+      { provinceSlug: "samana", name: "El Bohío de Doña Marina El Limón", cuisineType: "dominicana", priceRange: "$$", description: "Pescado con salsa de coco fresca de Samaná y moro de habichuelas negras con leche de coco.", googleMapsUrl: "https://maps.google.com/?q=Restaurante+El+Limon+Samana" },
+      { provinceSlug: "la-vega", name: "Aroma de la Montaña Jarabacoa", cuisineType: "dominicana", priceRange: "$$", description: "Sancocho de montaña, carnes guisadas y vegetales frescos en mirador giratorio.", googleMapsUrl: "https://maps.google.com/?q=Aroma+de+la+Montana+Jarabacoa" },
+      { provinceSlug: "santiago", name: "Camp David Ranch Panoramic", cuisineType: "dominicana", priceRange: "$$$", description: "Mirador de montaña sobre la ciudad con platos típicos cibaeños y museo de autos.", googleMapsUrl: "https://maps.google.com/?q=Camp+David+Ranch" },
+      { provinceSlug: "puerto-plata", name: "Skina Malecón Puerto Plata", cuisineType: "mariscos", priceRange: "$$", description: "Chillo a la plancha, camarones al ajillo y tostones dorados frente al mar.", googleMapsUrl: "https://maps.google.com/?q=Malecon+Puerto+Plata" },
+      { provinceSlug: "barahona", name: "Rancho Típico Brisas del Mar Los Patos", cuisineType: "mariscos", priceRange: "$$", description: "Pescado frito al estilo sureño con tostones crujientes y yaniqueques calientes.", googleMapsUrl: "https://maps.google.com/?q=Los+Patos+Barahona+Comida" },
+      { provinceSlug: "pedernales", name: "Rancho Cueva de las Águilas Cabo Rojo", cuisineType: "mariscos", priceRange: "$$", description: "Comida costera sobre la arena: lambí guisado y pescado fresco al momento.", googleMapsUrl: "https://maps.google.com/?q=Rancho+Cueva+de+las+Aguilas" },
+      { provinceSlug: "montecristi", name: "Chivo Liniero Don Lulú El Morro", cuisineType: "dominicana", priceRange: "$$", description: "Auténtico chivo liniero sazonado con orégano silvestre y moro al fogón de leña.", googleMapsUrl: "https://maps.google.com/?q=El+Morro+Montecristi" },
+      { provinceSlug: "la-romana", name: "La Casita del Río Chavón", cuisineType: "internacional", priceRange: "$$$", description: "Terraza de piedra sobre el cañón del río Chavón con vistas panorámicas.", googleMapsUrl: "https://maps.google.com/?q=Altos+de+Chavon" },
+      { provinceSlug: "san-pedro-de-macoris", name: "Rincón Cocolo de la Cueva", cuisineType: "dominicana", priceRange: "$$", description: "Domplines con bacalao guisado, yaniqueques calientes y bebidas de jengibre.", googleMapsUrl: "https://maps.google.com/?q=Cueva+de+las+Maravillas" },
+      { provinceSlug: "peravia", name: "Dulcería Las Marías & Restaurante El Caney Baní", cuisineType: "dominicana", priceRange: "$", description: "Dulces de leche cortada con coco, mango banilejo y almuerzo criollo campesino.", googleMapsUrl: "https://maps.google.com/?q=Dulceria+Las+Marias+Bani" },
+      { provinceSlug: "san-cristobal", name: "Balneario Restaurante La Toma", cuisineType: "dominicana", priceRange: "$", description: "Pasteles en hoja tradicionales sancristobalenses y sancocho criollo.", googleMapsUrl: "https://maps.google.com/?q=La+Toma+San+Cristobal" },
+      { provinceSlug: "azua", name: "El Buen Sabor de Bahía de Ocoa", cuisineType: "mariscos", priceRange: "$$", description: "Pescados al minuto de la bahía con tostones calientes y ensalada verde.", googleMapsUrl: "https://maps.google.com/?q=Bahia+de+Ocoa" },
+      { provinceSlug: "el-seibo", name: "Restaurante Mirador Las Alturas Montaña Redonda", cuisineType: "dominicana", priceRange: "$$", description: "Parrillada criolla y comida campesina en la cima con vista al mar y lagunas.", googleMapsUrl: "https://maps.google.com/?q=Montana+Redonda" },
+      { provinceSlug: "hato-mayor", name: "Rancho Ecológico Caño Hondo", cuisineType: "dominicana", priceRange: "$$", description: "Comida con productos orgánicos locales servida junto a cascadas y pozas fluviales.", googleMapsUrl: "https://maps.google.com/?q=Rancho+Cano+Hondo" },
+      { provinceSlug: "maria-trinidad-sanchez", name: "Rancho Marisquero Playa Grande Cabrera", cuisineType: "mariscos", priceRange: "$$", description: "Pescado frito al estilo playero con tostones y cocos de agua fríos bajo palmeras.", googleMapsUrl: "https://maps.google.com/?q=Playa+Grande+Cabrera" },
+      { provinceSlug: "espaillat", name: "Mofongo Mi Terraza Mocana", cuisineType: "dominicana", priceRange: "$$", description: "Reconocido nacionalmente por su mofongo en pilón con chicharrón crujiente y queso.", googleMapsUrl: "https://maps.google.com/?q=Mi+Terraza+Mofongo+Moca" },
+      { provinceSlug: "monte-plata", name: "Parada Campesina Salto Alto Bayaguana", cuisineType: "dominicana", priceRange: "$", description: "Pollo al caldero, moro de guandules y tostones al pie de la cascada.", googleMapsUrl: "https://maps.google.com/?q=Salto+Alto+Bayaguana" },
+      { provinceSlug: "san-juan", name: "El Granero Criollo Sanjuanero", cuisineType: "dominicana", priceRange: "$", description: "El legendario chenchén con chivo guisado y el tradicional postre de chaca.", googleMapsUrl: "https://maps.google.com/?q=San+Juan+de+la+Maguana" },
+      { provinceSlug: "monesenor-nouel", name: "Típico Bonao Autopista Duarte", cuisineType: "dominicana", priceRange: "$$", description: "Buffet criollo con chicharrón, quipes, jugos naturales y sancocho caliente.", googleMapsUrl: "https://maps.google.com/?q=Tipico+Bonao" },
+      { provinceSlug: "sanchez-ramirez", name: "El Mirador Náutico Presa de Hatillo", cuisineType: "dominicana", priceRange: "$$", description: "Pescado de agua dulce recién preparado con tostones y piña cotuisana fresca.", googleMapsUrl: "https://maps.google.com/?q=Presa+de+Hatillo" },
+      { provinceSlug: "valverde", name: "Terraza Sabor del Yaque Mao", cuisineType: "dominicana", priceRange: "$", description: "Platos campesinos con bananos frescos de exportación y chivo liniero.", googleMapsUrl: "https://maps.google.com/?q=Mao+Valverde" },
+      { provinceSlug: "santiago-rodriguez", name: "El Fogón del Casabe Monción", cuisineType: "dominicana", priceRange: "$", description: "Taller artesanal y degustación de casabe relleno caliente con platos criollos.", googleMapsUrl: "https://maps.google.com/?q=Moncion+Casabe" },
+      { provinceSlug: "dajabon", name: "Parador Histórico Beller Dajabón", cuisineType: "dominicana", priceRange: "$", description: "Comida norteña tradicional con arroz, habichuelas y res guisada campesina.", googleMapsUrl: "https://maps.google.com/?q=Dajabon" },
+      { provinceSlug: "elias-pina", name: "Comedor Doña Luisa Bánica", cuisineType: "dominicana", priceRange: "$", description: "Guisos caseros de pollo criollo y viandas hervidas al estilo tradicional sureño.", googleMapsUrl: "https://maps.google.com/?q=Banica" },
+      { provinceSlug: "bahoruco", name: "Terraza Las Marías Neiba", cuisineType: "dominicana", priceRange: "$", description: "Tilapia fresca y degustación de mermelada y jugo de uvas de Neiba junto al manantial.", googleMapsUrl: "https://maps.google.com/?q=Balneario+Las+Marias" },
+      { provinceSlug: "independencia", name: "El Oasis del Lago Jimaní", cuisineType: "dominicana", priceRange: "$", description: "Platos tradicionales con arroz, habichuelas y refrescos helados.", googleMapsUrl: "https://maps.google.com/?q=Jimani" },
+      { provinceSlug: "san-jose-de-ocoa", name: "Rancho Francisco Ocoa", cuisineType: "dominicana", priceRange: "$$", description: "Sancocho ocoeño caliente con aguacate y café de altura recién colado.", googleMapsUrl: "https://maps.google.com/?q=Rancho+Francisco+Ocoa" },
+      { provinceSlug: "hermanas-mirabal", name: "Rincón Culinario de las Mariposas Salcedo", cuisineType: "dominicana", priceRange: "$", description: "Platos cibaeños caseros y dulces tradicionales de naranja en almíbar.", googleMapsUrl: "https://maps.google.com/?q=Casa+Museo+Hermanas+Mirabal" },
+      { provinceSlug: "duarte", name: "Hacienda La Esmeralda Cacao San Francisco", cuisineType: "dominicana", priceRange: "$$", description: "Almuerzo campestre criollo con degustación de chocolate artesanal puro de cacao orgánico.", googleMapsUrl: "https://maps.google.com/?q=Sendero+del+Cacao" }
+    ];
+
+    // ALOJAMIENTOS (CON FILTRO ESCOLAR)
+    const ACCOMMODATIONS = [
+      { name: "Rancho Baiguate & Campamento Ecológico", provinceSlug: "la-vega", type: "cabaña", description: "Centro insignia de ecoturismo y campamentos juveniles con cabañas, río y huerto.", pricePerNightRD: 4200, pricePerNightUSD: 70, services: ["Piscina de Río", "Salones Talleres", "Guías Ecológicos"], isSchoolApproved: true, image: "https://images.pexels.com/photos/14025638/pexels-photo-14025638.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Rancho+Baiguate" },
+      { name: "Hostal Nicolás de Ovando (Zona Colonial)", provinceSlug: "distrito-nacional", type: "hostal", description: "Hostal patrimonial del siglo XVI en la primera calle de América con arcos virreinales.", pricePerNightRD: 7500, pricePerNightUSD: 125, services: ["Patio Español", "Desayuno Criollo", "Seguridad 24h"], isSchoolApproved: true, image: "https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Hostal+Nicolas+de+Ovando" },
+      { name: "Ecolodge Clave Verde Samaná", provinceSlug: "samana", type: "posada", description: "Posada ecológica autosostenible con energía solar y vistas a la bahía de Samaná.", pricePerNightRD: 5200, pricePerNightUSD: 87, services: ["Energía Solar", "Piscina Ecológica", "Desayuno Frutal"], isSchoolApproved: true, image: "https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Clave+Verde+Samana" },
+      { name: "Punta Cana Casino & Nightclub Adult Resort", provinceSlug: "la-altagracia", type: "resort", description: "Resort solo para adultos con casino, bares y fiestas (Se oculta en Modo Escolar).", pricePerNightRD: 16500, pricePerNightUSD: 275, services: ["Casino 24h", "Bares de Licores", "Discoteca"], isSchoolApproved: false, image: "https://images.pexels.com/photos/10490906/pexels-photo-10490906.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800", googleMapsUrl: "https://maps.google.com/?q=Bavaro+Punta+Cana" }
+    ];
+
+    // EXCURSIONES ORGANIZADAS
+    const EXCURSIONS = [
+      {
+        id: 1,
+        title: "Eco-Aventura Jarabacoa: Ciudad de la Eterna Primavera & Cascadas",
+        destination: "Jarabacoa & Saltos de Jimenoa",
+        province: "La Vega",
+        description: "Viaje de un día completo para descubrir el pulmón verde dominicano: puentes colgantes, aire puro de montaña y almuerzo buffet criollo.",
+        departureDate: "2025-05-18",
+        departureTime: "06:30 AM",
+        returnTime: "07:30 PM",
+        departurePoint: "Parque Enriquillo, Santo Domingo",
+        pickupPoints: ["Parque Enriquillo (06:30 AM)", "Plaza Blue Mall Churchill (07:00 AM)", "Cruce de Bonao (08:30 AM)"],
+        priceRD: 2950,
+        priceUSD: 49,
+        transportType: "guagua",
+        totalSeats: 48,
+        availableSeats: 34,
+        image: "https://images.pexels.com/photos/6873614/pexels-photo-6873614.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800",
+        isEducationalCertified: true,
+        whatIncludes: ["Transporte en guagua ejecutiva climatizada con WiFi", "Desayuno refrigerio a bordo", "Entrada a Salto Jimenoa", "Almuerzo buffet dominicano", "Guías ecológicos y paramédico", "Seguro de viaje"],
+        whatNotIncludes: ["Propinas opcionales", "Bebidas alcohólicas", "Gastos personales"],
+        schedule: [
+          { timeStart: "06:30 AM", timeEnd: "07:00 AM", place: "Parque Enriquillo / Blue Mall", title: "Abordaje y Check-in", description: "Verificación de pasajeros y entrega de brazaletes." },
+          { timeStart: "07:00 AM", timeEnd: "09:30 AM", place: "Autopista Duarte hacia Jarabacoa", title: "Trayecto Panorámico", description: "Desayuno refrigerio servido a bordo con parada técnica." },
+          { timeStart: "09:30 AM", timeEnd: "12:30 PM", place: "Salto Jimenoa", title: "Cruce de Puentes Colgantes & Pozas", description: "Senderismo guiado y baño en pozas cristalinas autorizadas." },
+          { timeStart: "01:00 PM", timeEnd: "02:30 PM", place: "Restaurante Campestre", title: "Almuerzo Buffet Típico", description: "Banquete criollo con arroz, pollo al caldero y tostones." },
+          { timeStart: "02:45 PM", timeEnd: "04:30 PM", place: "Finca de Café de Altura", title: "Taller Interactivo de Café", description: "Explicación del café dominicano y tiempo libre." },
+          { timeStart: "05:00 PM", timeEnd: "07:30 PM", place: "Retorno Confortable", title: "Regreso a Santo Domingo", description: "Música ambiental y entrega en puntos de recogida." }
+        ]
+      },
+      {
+        id: 2,
+        title: "Expedición Samaná: Santuario de Ballenas & Paraíso Cayo Levantado",
+        destination: "Bahía de Samaná & Cayo Levantado",
+        province: "Samaná",
+        description: "Embarque en catamarán marítimo hacia el santuario de ballenas jorobadas y almuerzo con pescado al coco en Cayo Levantado.",
+        departureDate: "2025-05-24",
+        departureTime: "06:00 AM",
+        returnTime: "08:30 PM",
+        departurePoint: "Centro Comercial Sambil",
+        pickupPoints: ["Sambil (06:00 AM)", "Coral Mall San Isidro (06:30 AM)"],
+        priceRD: 4200,
+        priceUSD: 70,
+        transportType: "guagua",
+        totalSeats: 44,
+        availableSeats: 26,
+        image: "https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800",
+        isEducationalCertified: true,
+        whatIncludes: ["Transporte terrestre ejecutivo", "Travesía en catamarán con salvavidas", "Permiso oficial Medio Ambiente", "Almuerzo buffet típico en Cayo Levantado", "Biólogo marino a bordo"],
+        whatNotIncludes: ["Alquiler de motos de agua", "Bebidas fuera del buffet"],
+        schedule: [
+          { timeStart: "06:00 AM", timeEnd: "06:30 AM", place: "Sambil Santo Domingo", title: "Salida y Abordaje", description: "Encuentro y verificación." },
+          { timeStart: "09:30 AM", timeEnd: "12:30 PM", place: "Bahía de Samaná", title: "Avistamiento de Ballenas", description: "Búsqueda y observación respetuosa guiada." },
+          { timeStart: "01:00 PM", timeEnd: "04:30 PM", place: "Cayo Levantado", title: "Almuerzo Típico y Playa", description: "Pescado al coco y relajación en la arena." },
+          { timeStart: "05:00 PM", timeEnd: "08:30 PM", place: "Autovía del Nordeste", title: "Retorno a la Capital", description: "Regreso terrestre confortable." }
+        ]
+      },
+      {
+        id: 3,
+        title: "Ruta Histórica & Cultural Colonial: Cuna de América",
+        destination: "Ciudad Colonial & Faro a Colón",
+        province: "Distrito Nacional",
+        description: "Visita guiada por historiadores a la Catedral Primada, Alcázar de Colón, Fortaleza Ozama y Parque Los Tres Ojos.",
+        departureDate: "2025-05-20",
+        departureTime: "08:00 AM",
+        returnTime: "05:00 PM",
+        departurePoint: "Parque Colón, Ciudad Colonial",
+        pickupPoints: ["Parque Colón (08:00 AM)", "Hotel Lina Máximo Gómez (08:30 AM)"],
+        priceRD: 1850,
+        priceUSD: 31,
+        transportType: "minibus",
+        totalSeats: 28,
+        availableSeats: 22,
+        image: "https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800",
+        isEducationalCertified: true,
+        whatIncludes: ["Minibús con aire acondicionado", "Entradas a todos los museos y Los Tres Ojos", "Guía historiador acreditado", "Almuerzo criollo completo", "Cuaderno didáctico escolar"],
+        whatNotIncludes: ["Compras de recuerdos"],
+        schedule: [
+          { timeStart: "08:00 AM", timeEnd: "09:00 AM", place: "Parque Los Tres Ojos", title: "Cavernas Subterráneas", description: "Descenso a las pozas kársticas." },
+          { timeStart: "09:30 AM", timeEnd: "12:30 PM", place: "Calle Las Damas y Alcázar", title: "Recorrido Virreinal", description: "Historia del primer asentamiento de América." },
+          { timeStart: "12:45 PM", timeEnd: "02:00 PM", place: "Casona Colonial", title: "Almuerzo Tradicional", description: "Menú criollo nutritivo." },
+          { timeStart: "02:15 PM", timeEnd: "05:00 PM", place: "Catedral Primada", title: "Cierre Patrimonial", description: "Visita al templo y entrega de certificados." }
+        ]
+      },
+      {
+        id: 4,
+        title: "Sur Mágico: Dunas de Baní, Salinas Rosadas & Bahía de Ocoa",
+        destination: "Baní & Bahía de Ocoa",
+        province: "Peravia",
+        description: "Caminata sobre dunas de 35 metros con vistas al mar Caribe, minas de sal marina rosadas y baño en aguas calmas.",
+        departureDate: "2025-05-31",
+        departureTime: "07:00 AM",
+        returnTime: "06:30 PM",
+        departurePoint: "Plaza de la Salud, Santo Domingo",
+        pickupPoints: ["Plaza de la Salud (07:00 AM)", "Peaje 6 de Noviembre (07:30 AM)"],
+        priceRD: 2600,
+        priceUSD: 43,
+        transportType: "minibus",
+        totalSeats: 30,
+        availableSeats: 18,
+        image: "https://images.pexels.com/photos/36916578/pexels-photo-36916578.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800",
+        isEducationalCertified: true,
+        whatIncludes: ["Transporte climatizado ida y vuelta", "Entrada a Dunas y Salinas", "Almuerzo con pescado o pollo criollo", "Degustación de dulces banilejos"],
+        whatNotIncludes: ["Alquiler de tablas de sandboarding"],
+        schedule: [
+          { timeStart: "07:00 AM", timeEnd: "08:45 AM", place: "Carretera Sánchez", title: "Salida hacia Baní", description: "Trayecto panorámico." },
+          { timeStart: "09:00 AM", timeEnd: "11:30 AM", place: "Dunas de Baní", title: "Exploración de las Dunas", description: "Caminata sobre arena fina." },
+          { timeStart: "12:00 PM", timeEnd: "01:30 PM", place: "Salinas de Baní", title: "Salinas Rosadas y Almuerzo", description: "Extracción natural de sal y almuerzo." },
+          { timeStart: "02:00 PM", timeEnd: "06:30 PM", place: "Bahía de Ocoa", title: "Playa y Retorno", description: "Baño en aguas cálidas y regreso." }
+        ]
+      },
+      {
+        id: 5,
+        title: "Aventura Caribeña VIP: Catamarán a Isla Saona & Piscinas Naturales",
+        destination: "Isla Saona & Cotubanamá",
+        province: "La Romana",
+        description: "Navegación VIP en catamarán con música tropical, parada en la piscina natural con estrellas de mar gigantes y día de playa.",
+        departureDate: "2025-06-07",
+        departureTime: "06:15 AM",
+        returnTime: "08:00 PM",
+        departurePoint: "Lincoln con 27 de Febrero",
+        pickupPoints: ["Lincoln 27 (06:15 AM)", "Aeropuerto Las Américas (07:00 AM)", "Muelle Bayahíbe (08:45 AM)"],
+        priceRD: 3800,
+        priceUSD: 63,
+        transportType: "guagua",
+        totalSeats: 50,
+        availableSeats: 38,
+        image: "https://images.pexels.com/photos/1030322/pexels-photo-1030322.png?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800",
+        isEducationalCertified: false,
+        whatIncludes: ["Transporte terrestre de lujo", "Catamarán y lancha rápida", "Parada en Piscina Natural", "Almuerzo buffet en playa privada", "Animación caribeña"],
+        whatNotIncludes: ["Fotos profesionales impresas"],
+        schedule: [
+          { timeStart: "06:15 AM", timeEnd: "08:45 AM", place: "Ruta hacia Bayahíbe", title: "Traslado al Muelle", description: "Abordaje terrestre." },
+          { timeStart: "09:30 AM", timeEnd: "10:45 AM", place: "Piscina Natural", title: "Bancos de Arena y Estrellas", description: "Baño en aguas turquesas." },
+          { timeStart: "11:30 AM", timeEnd: "03:30 PM", place: "Isla Saona", title: "Almuerzo Buffet y Playa", description: "Cocoteros y relajación caribeña." },
+          { timeStart: "04:00 PM", timeEnd: "08:00 PM", place: "Retorno Marítimo", title: "Navegación al Atardecer", description: "Retorno a Santo Domingo." }
+        ]
+      }
+    ];
+
+    let BOOKINGS = [
+      {
+        id: 1,
+        bookingCode: 'ERD-2025-7821',
+        excursionId: 1,
+        excursionTitle: 'Eco-Aventura Jarabacoa: Ciudad de la Eterna Primavera & Cascadas',
+        customerName: 'Prof. Carlos Méndez',
+        customerEmail: 'contacto@colegiosanjudas.edu.do',
+        accountType: 'centro_educativo',
+        departureDate: '2025-05-18',
+        transportType: 'guagua',
+        pickupPoint: 'Parque Enriquillo (06:30 AM)',
+        totalPassengers: 4,
+        adultsCount: 2,
+        minorsCount: 2,
+        responsibleAdultName: 'Prof. Carlos Méndez (Céd 001-1249872-3)',
+        currency: 'RD',
+        totalPrice: 11800,
+        status: 'confirmada'
+      }
+    ];
+
+    let FAVORITES = [
+      { id: 'fav-1', title: 'Salto El Limón', image: 'https://images.pexels.com/photos/38376805/pexels-photo-38376805.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800' },
+      { id: 'fav-2', title: 'Ciudad Colonial', image: 'https://images.pexels.com/photos/29269132/pexels-photo-29269132.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=600&w=800' }
+    ];
+
+    let ITINERARY = [
+      { day: 1, title: 'Llegada a Santo Domingo y Ciudad Colonial', note: 'Paseo por Calle Las Damas y cena en Mesón de Bari' },
+      { day: 2, title: 'Excursión a Jarabacoa', note: 'Cruzar los puentes colgantes del Salto Jimenoa y degustar café' }
+    ];
+
+    let activeBookingExcursion = null;
+
+    // --- Formato de Moneda ---
+    function formatCurrency(rdAmount, usdAmount) {
+      if (currentCurrency === 'USD') {
+        const usd = usdAmount !== undefined ? usdAmount : Math.round(rdAmount / 60);
+        return `US$ ${usd}`;
+      }
+      return `RD$ ${rdAmount.toLocaleString('es-DO')}`;
+    }
+
+    // --- Control de Modales ---
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('hidden');
+        lucide.createIcons();
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.add('hidden');
+    }
+
+    // --- Modo Centro Educativo ---
+    function toggleEducationalMode() {
+      educationalMode = !educationalMode;
+      const banner = document.getElementById('edu-banner-alert');
+      const badge = document.getElementById('edu-badge-top');
+      const statusText = document.getElementById('edu-status-text');
+      const hotelAlert = document.getElementById('edu-hotel-alert');
+
+      if (educationalMode) {
+        banner.classList.remove('hidden');
+        badge.classList.remove('hidden');
+        badge.classList.add('inline-flex');
+        hotelAlert.classList.remove('hidden');
+        statusText.innerText = 'ON';
+        document.getElementById('toggle-edu-btn').classList.add('bg-amber-400', 'text-slate-900', 'font-bold');
+      } else {
+        banner.classList.add('hidden');
+        badge.classList.add('hidden');
+        badge.classList.remove('inline-flex');
+        hotelAlert.classList.add('hidden');
+        statusText.innerText = 'OFF';
+        document.getElementById('toggle-edu-btn').classList.remove('bg-amber-400', 'text-slate-900', 'font-bold');
+      }
+
+      renderAccommodations();
+      renderExcursions();
+      renderProvinces();
+    }
+
+    // --- Cambio de Moneda ---
+    function setCurrency(curr) {
+      currentCurrency = curr;
+      const btnRD = document.getElementById('btn-currency-rd');
+      const btnUSD = document.getElementById('btn-currency-usd');
+
+      if (curr === 'RD') {
+        btnRD.className = 'px-2 py-0.5 rounded bg-[#ce1126] text-white font-bold';
+        btnUSD.className = 'px-2 py-0.5 rounded text-white/80 hover:text-white';
+      } else {
+        btnUSD.className = 'px-2 py-0.5 rounded bg-[#002f6c] text-white font-bold';
+        btnRD.className = 'px-2 py-0.5 rounded text-white/80 hover:text-white';
+      }
+
+      renderExcursions();
+      renderAccommodations();
+    }
+
+    // --- Cambio de Idioma ---
+    function setLanguage(lang) {
+      currentLang = lang;
+      const btnES = document.getElementById('btn-lang-es');
+      const btnEN = document.getElementById('btn-lang-en');
+
+      if (lang === 'es') {
+        btnES.className = 'px-2 py-0.5 rounded bg-white text-[#0b2545] font-bold';
+        btnEN.className = 'px-2 py-0.5 rounded text-white/80 hover:text-white';
+        applyTranslations('es');
+      } else {
+        btnEN.className = 'px-2 py-0.5 rounded bg-white text-[#0b2545] font-bold';
+        btnES.className = 'px-2 py-0.5 rounded text-white/80 hover:text-white';
+        applyTranslations('en');
+      }
+    }
+
+    function applyTranslations(l) {
+      const texts = {
+        es: {
+          navInicio: 'Inicio', navDestinos: 'Destinos', navProvincias: 'Las 31 Provincias', navGastronomia: 'Gastronomía', navExcursiones: 'Excursiones Organizadas', navAlojamientos: 'Alojamientos',
+          heroSub: 'DESCUBRE', heroDesc: 'La belleza de nuestra tierra, su gente, su cultura y sus rincones más especiales.', heroBtn: 'EXPLORAR DESTINOS',
+          catDest: 'Destinos', catDestDesc: 'Playas, ciudades y lugares turísticos.',
+          catNat: 'Naturaleza', catNatDesc: 'Ríos, montañas, cascadas y parques.',
+          catCult: 'Cultura', catCultDesc: 'Tradiciones, música, arte y festividades.',
+          catGast: 'Gastronomía', catGastDesc: 'Sabores únicos de nuestra tierra.',
+          destTitle: 'Destinos destacados',
+          hiddenSub: 'Un rincón por descubrir', hiddenTitle: 'Hay mucho más que las playas', hiddenDesc: 'Desde pequeños pueblos hasta ríos escondidos, República Dominicana tiene historias, paisajes y experiencias esperando ser conocidas.', hiddenBtn: 'Descubrir más →',
+          foodTitle: 'Sabores de nuestra tierra',
+          cultSub: 'Vive nuestra cultura', cultTitle: 'Nuestra gente, nuestras tradiciones y nuestra música hacen de la República Dominicana un lugar único.', cultBtn: 'Conocer más →'
+        },
+        en: {
+          navInicio: 'Home', navDestinos: 'Destinations', navProvincias: 'The 31 Provinces', navGastronomia: 'Gastronomy', navExcursiones: 'Organized Excursions', navAlojamientos: 'Lodging',
+          heroSub: 'DISCOVER', heroDesc: 'The beauty of our land, its people, its vibrant culture, and its most extraordinary treasures.', heroBtn: 'EXPLORE DESTINATIONS',
+          catDest: 'Destinations', catDestDesc: 'Beaches, historic cities, and landmarks.',
+          catNat: 'Nature', catNatDesc: 'Rivers, mountain ridges, waterfalls, and national parks.',
+          catCult: 'Culture', catCultDesc: 'Traditions, merengue, folk arts, and festivals.',
+          catGast: 'Gastronomy', catGastDesc: 'Unique culinary heritage and flavors.',
+          destTitle: 'Featured Destinations',
+          hiddenSub: 'A Corner to Discover', hiddenTitle: 'There is so much more than beaches', hiddenDesc: 'From quaint mountain valleys to turquoise hidden rivers, the Dominican Republic has wonders and stories waiting for you.', hiddenBtn: 'Explore more →',
+          foodTitle: 'Flavors of Our Homeland',
+          cultSub: 'Experience Our Culture', cultTitle: 'Our warm people, our joyful traditions, and our rhythms make the Dominican Republic truly unique.', cultBtn: 'Learn more →'
+        }
+      }[l];
+
+      document.getElementById('nav-inicio').innerText = texts.navInicio;
+      document.getElementById('nav-destinos').innerText = texts.navDestinos;
+      document.getElementById('nav-provincias').innerText = texts.navProvincias;
+      document.getElementById('nav-gastronomia').innerText = texts.navGastronomia;
+      document.getElementById('nav-alojamientos').innerText = texts.navAlojamientos;
+      document.getElementById('t-hero-sub').innerText = texts.heroSub;
+      document.getElementById('t-hero-desc').innerText = texts.heroDesc;
+      document.getElementById('t-cat-dest').innerText = texts.catDest;
+      document.getElementById('t-cat-dest-desc').innerText = texts.catDestDesc;
+      document.getElementById('t-cat-nat').innerText = texts.catNat;
+      document.getElementById('t-cat-nat-desc').innerText = texts.catNatDesc;
+      document.getElementById('t-cat-cult').innerText = texts.catCult;
+      document.getElementById('t-cat-cult-desc').innerText = texts.catCultDesc;
+      document.getElementById('t-cat-gast').innerText = texts.catGast;
+      document.getElementById('t-cat-gast-desc').innerText = texts.catGastDesc;
+      document.getElementById('t-dest-title').innerText = texts.destTitle;
+      document.getElementById('t-hidden-sub').innerText = texts.hiddenSub;
+      document.getElementById('t-hidden-title').innerText = texts.hiddenTitle;
+      document.getElementById('t-hidden-desc').innerText = texts.hiddenDesc;
+      document.getElementById('t-hidden-btn').innerText = texts.hiddenBtn;
+      document.getElementById('t-food-title').innerText = texts.foodTitle;
+      document.getElementById('t-cult-sub').innerText = texts.cultSub;
+      document.getElementById('t-cult-title').innerText = texts.cultTitle;
+      document.getElementById('t-cult-btn').innerText = texts.cultBtn;
+    }
+
+    // --- Búsqueda en tiempo real ---
+    function handleSearch(val) {
+      searchQuery = val.trim().toLowerCase();
+      renderProvinces();
+    }
+
+    // --- Filtro de Región ---
+    function filterRegion(reg) {
+      selectedRegion = reg;
+      const ids = ['todas', 'metropolitana', 'cibao', 'sur', 'este'];
+      ids.forEach(id => {
+        const el = document.getElementById(`filter-${id}`);
+        if (el) {
+          if (id === reg) {
+            el.className = 'px-3 py-1.5 rounded-xl bg-white text-[#002f6c] font-bold shadow-xs';
+          } else {
+            el.className = 'px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900';
+          }
+        }
+      });
+      renderProvinces();
+    }
+
+    // --- Renderizado de Provincias ---
+    function renderProvinces() {
+      const container = document.getElementById('provinces-grid-container');
+      if (!container) return;
+
+      const filtered = PROVINCES.filter(p => {
+        if (selectedRegion !== 'todas') {
+          if (!p.region.toLowerCase().includes(selectedRegion.toLowerCase())) return false;
+        }
+        if (searchQuery) {
+          return p.name.toLowerCase().includes(searchQuery) ||
+                 p.capital.toLowerCase().includes(searchQuery) ||
+                 p.description.toLowerCase().includes(searchQuery);
+        }
+        return true;
+      });
+
+      container.innerHTML = filtered.map(prov => {
+        const placesCount = DESTINATIONS.filter(d => d.provinceSlug === prov.slug).length;
+        return `
+          <div onclick="openProvinceModal('${prov.slug}')" class="group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-xl border border-slate-200/80 transition-all cursor-pointer transform hover:-translate-y-1 flex flex-col">
+            <div class="relative h-44 overflow-hidden bg-slate-100">
+              <img src="${prov.image}" alt="${prov.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-[#002f6c] text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                ${prov.region}
+              </span>
+              ${prov.isEducationalHighlight ? `
+                <span class="absolute top-3 right-3 bg-amber-400 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                  🎓 Escolar
+                </span>
+              ` : ''}
+              <div class="absolute bottom-2.5 left-3 right-3 text-white">
+                <span class="text-[10px] text-white/80 block uppercase tracking-wider">Capital: ${prov.capital}</span>
+                <h3 class="font-serif-title text-base font-bold text-white leading-tight">${prov.name}</h3>
+              </div>
+            </div>
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-3">${prov.description}</p>
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <span>📍 ${placesCount > 0 ? placesCount + ' Lugares' : 'Lugares turísticos'}</span>
+                <span class="text-[#002f6c] font-semibold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                  Explorar →
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- Renderizado de Alojamientos ---
+    function renderAccommodations() {
+      const container = document.getElementById('accommodations-container');
+      if (!container) return;
+
+      const filtered = ACCOMMODATIONS.filter(acc => {
+        if (educationalMode && !acc.isSchoolApproved) return false;
+        return true;
+      });
+
+      container.innerHTML = filtered.map(acc => `
+        <div class="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-xl border border-slate-100 transition-all flex flex-col group">
+          <div class="relative h-44 overflow-hidden">
+            <img src="${acc.image}" alt="${acc.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <span class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">${acc.type}</span>
+            ${acc.isSchoolApproved ? `
+              <span class="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">✓ Apto Escolar</span>
+            ` : `
+              <span class="absolute top-3 right-3 bg-slate-800 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full shadow">Adultos</span>
+            `}
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="font-serif-title text-base font-bold text-slate-900 group-hover:text-[#002f6c] transition-colors leading-snug mb-1">${acc.name}</h3>
+              <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-3">${acc.description}</p>
+              <div class="flex flex-wrap gap-1 mb-3">
+                ${acc.services.slice(0, 3).map(s => `<span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${s}</span>`).join('')}
+              </div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Noche desde</span>
+                <span class="text-sm font-bold text-[#ce1126]">${formatCurrency(acc.pricePerNightRD, acc.pricePerNightUSD)}</span>
+              </div>
+              <a href="${acc.googleMapsUrl}" target="_blank" class="text-xs font-semibold text-[#002f6c] hover:text-[#ce1126] inline-flex items-center gap-1">
+                <span>Mapa</span> ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- Renderizado de Excursiones ---
+    function renderExcursions() {
+      const container = document.getElementById('excursions-cards-container');
+      if (!container) return;
+
+      container.innerHTML = EXCURSIONS.map(exc => {
+        const seatsPercent = Math.round((exc.availableSeats / exc.totalSeats) * 100);
+        return `
+          <div class="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl border border-slate-100 transition-all flex flex-col group">
+            <div class="relative h-56 overflow-hidden">
+              <img src="${exc.image}" alt="${exc.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+              <span class="absolute top-4 left-4 bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                📍 ${exc.province}
+              </span>
+              ${exc.isEducationalCertified ? `
+                <span class="absolute top-4 right-4 bg-amber-400 text-slate-900 text-[10px] font-bold px-2.5 py-1 rounded-full shadow flex items-center gap-1">
+                  🎓 Certificado Escolar
+                </span>
+              ` : ''}
+              <div class="absolute bottom-3 left-4 right-4 text-white">
+                <span class="text-[11px] text-white/80">📅 Salida: ${exc.departureDate} (${exc.departureTime})</span>
+              </div>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-serif-title text-lg font-bold text-slate-900 group-hover:text-[#002f6c] transition-colors leading-snug mb-2">${exc.title}</h3>
+                <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4">${exc.description}</p>
+
+                <div class="bg-slate-50 rounded-2xl p-3 mb-4 space-y-2 border border-slate-100">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-500 font-medium">🚌 Transporte:</span>
+                    <span class="font-bold text-slate-800 capitalize">${exc.transportType === 'guagua' ? 'Guagua Ejecutiva' : exc.transportType === 'minibus' ? 'Minibús Turístico' : 'Privado'}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-500 font-medium">👥 Asientos libres:</span>
+                    <span class="font-bold ${exc.availableSeats < 5 ? 'text-rose-600' : 'text-emerald-600'}">${exc.availableSeats} de ${exc.totalSeats}</span>
+                  </div>
+                  <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                    <div class="h-full ${seatsPercent > 40 ? 'bg-emerald-500' : 'bg-amber-500'}" style="width: ${seatsPercent}%"></div>
+                  </div>
+                  <div class="text-[11px] text-slate-400 pt-1 flex items-center justify-between">
+                    <span>Mínimo 2 pasajeros</span>
+                    <span>Adulto requerido para menores</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                <div>
+                  <span class="text-[11px] text-slate-400 block leading-none">Precio por persona</span>
+                  <span class="text-lg font-bold text-[#ce1126]">${formatCurrency(exc.priceRD, exc.priceUSD)}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button onclick="openBrochure(${exc.id})" class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200">
+                    Brochure
+                  </button>
+                  <button onclick="openBooking(${exc.id})" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#002f6c] hover:bg-[#0b2545] shadow">
+                    Reservar →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- Modal Provincia ---
+    function openProvinceModal(slug) {
+      const prov = PROVINCES.find(p => p.slug === slug);
+      if (!prov) return;
+
+      document.getElementById('prov-modal-img').src = prov.image;
+      document.getElementById('prov-modal-badge').innerText = prov.region;
+      document.getElementById('prov-modal-title').innerText = prov.name;
+      document.getElementById('prov-modal-capital').innerText = `Capital: ${prov.capital}`;
+      document.getElementById('prov-modal-desc').innerText = prov.description;
+
+      const places = DESTINATIONS.filter(d => d.provinceSlug === slug);
+      const placesContainer = document.getElementById('prov-modal-places');
+      if (places.length === 0) {
+        placesContainer.innerHTML = `<p class="text-xs text-slate-400 italic">No hay destinos registrados aún.</p>`;
+      } else {
+        placesContainer.innerHTML = places.map(dest => `
+          <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col sm:flex-row gap-4 items-start">
+            <img src="${dest.image}" alt="${dest.name}" class="w-full sm:w-28 h-24 object-cover rounded-xl" />
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-sm text-slate-900">${dest.name}</h4>
+                <span class="text-[11px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded capitalize">${dest.category}</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1 line-clamp-2">${dest.description}</p>
+              <div class="mt-2 flex items-center gap-4 text-[11px] text-slate-500">
+                <span>Horario: ${dest.schedule}</span>
+                <span>Entrada: ${dest.entryFeeRD === 0 ? 'Gratis' : formatCurrency(dest.entryFeeRD, dest.entryFeeUSD)}</span>
+              </div>
+              <div class="mt-3">
+                <a href="${dest.googleMapsUrl}" target="_blank" class="text-xs font-bold text-[#002f6c] hover:text-[#ce1126] inline-flex items-center gap-1">
+                  <span>Ver en Google Maps</span> ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const rests = RESTAURANTS.filter(r => r.provinceSlug === slug);
+      const restsContainer = document.getElementById('prov-modal-restaurants');
+      if (rests.length === 0) {
+        restsContainer.innerHTML = `<p class="text-xs text-slate-400 italic">Restaurantes típicos disponibles en la zona central.</p>`;
+      } else {
+        restsContainer.innerHTML = rests.map(r => `
+          <div class="p-3 bg-amber-50/60 rounded-xl border border-amber-100 flex items-center justify-between gap-4">
+            <div>
+              <p class="font-bold text-xs text-slate-900">${r.name}</p>
+              <p class="text-[11px] text-slate-500">${r.description} • Rango: ${r.priceRange}</p>
+            </div>
+            <a href="${r.googleMapsUrl}" target="_blank" class="shrink-0 text-xs font-semibold text-[#002f6c] hover:text-[#ce1126]">
+              Ubicación ↗
+            </a>
+          </div>
+        `).join('');
+      }
+
+      openModal('modal-province');
+    }
+
+    // --- Modal Brochure ---
+    function openBrochure(excId) {
+      const exc = EXCURSIONS.find(e => e.id === excId);
+      if (!exc) return;
+
+      document.getElementById('brochure-title').innerText = exc.title;
+      document.getElementById('brochure-desc').innerText = exc.description;
+      document.getElementById('brochure-dest').innerText = exc.destination;
+      document.getElementById('brochure-transport').innerText = `${exc.transportType} Turístico Climatizado`;
+      document.getElementById('brochure-time').innerText = `${exc.departureTime} - ${exc.returnTime}`;
+      document.getElementById('brochure-price').innerText = formatCurrency(exc.priceRD, exc.priceUSD);
+
+      const timeline = document.getElementById('brochure-timeline');
+      timeline.innerHTML = (exc.schedule || []).map(item => `
+        <div class="relative pl-6">
+          <div class="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-[#002f6c] border-2 border-white shadow"></div>
+          <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-bold text-[#ce1126] bg-rose-50 px-2 py-0.5 rounded">${item.timeStart} - ${item.timeEnd}</span>
+              <span class="text-[11px] text-slate-500 font-medium">${item.place}</span>
+            </div>
+            <h4 class="font-bold text-sm text-slate-900">${item.title}</h4>
+            <p class="text-xs text-slate-600 mt-1">${item.description}</p>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('brochure-includes').innerHTML = (exc.whatIncludes || []).map(i => `<li>✓ ${i}</li>`).join('');
+      document.getElementById('brochure-not-includes').innerHTML = (exc.whatNotIncludes || []).map(i => `<li>✕ ${i}</li>`).join('');
+
+      document.getElementById('brochure-book-btn').onclick = () => {
+        closeModal('modal-brochure');
+        openBooking(exc.id);
+      };
+
+      openModal('modal-brochure');
+    }
+
+    // --- Modal Reserva & Pago ---
+    function openBooking(excId) {
+      const exc = EXCURSIONS.find(e => e.id === excId);
+      if (!exc) return;
+      activeBookingExcursion = exc;
+
+      document.getElementById('booking-exc-title').innerText = exc.title;
+      document.getElementById('booking-exc-seats').innerText = `Asientos libres en este vehículo: ${exc.availableSeats} disponibles de ${exc.totalSeats}`;
+
+      const select = document.getElementById('book-pickup-select');
+      select.innerHTML = (exc.pickupPoints || []).map(p => `<option value="${p}">${p}</option>`).join('');
+
+      document.getElementById('booking-form').classList.remove('hidden');
+      document.getElementById('booking-success-box').classList.add('hidden');
+      document.getElementById('booking-error-msg').classList.add('hidden');
+      document.getElementById('book-total-pax').value = 2;
+      document.getElementById('book-adults-pax').value = 2;
+      document.getElementById('book-minors-pax').value = 0;
+      updatePaxDistribution();
+
+      openModal('modal-booking');
+    }
+
+    function updatePaxDistribution() {
+      if (!activeBookingExcursion) return;
+      const total = parseInt(document.getElementById('book-total-pax').value) || 2;
+      const adults = parseInt(document.getElementById('book-adults-pax').value) || 1;
+      const minors = parseInt(document.getElementById('book-minors-pax').value) || 0;
+
+      document.getElementById('booking-passengers-badge').innerText = `Total: ${total}`;
+
+      const respBox = document.getElementById('responsible-adult-box');
+      if (minors > 0) {
+        respBox.classList.remove('hidden');
+      } else {
+        respBox.classList.add('hidden');
+      }
+
+      const pricePerPax = currentCurrency === 'USD' ? activeBookingExcursion.priceUSD : activeBookingExcursion.priceRD;
+      const totalAmount = pricePerPax * total;
+      document.getElementById('booking-total-display').innerText = formatCurrency(totalAmount, totalAmount);
+    }
+
+    async function submitBooking(e) {
+      e.preventDefault();
+      const errorDiv = document.getElementById('booking-error-msg');
+      errorDiv.classList.add('hidden');
+
+      const total = parseInt(document.getElementById('book-total-pax').value) || 0;
+      const adults = parseInt(document.getElementById('book-adults-pax').value) || 0;
+      const minors = parseInt(document.getElementById('book-minors-pax').value) || 0;
+      const adultName = document.getElementById('book-adult-name').value.trim();
+      const pickup = document.getElementById('book-pickup-select').value;
+
+      if (total < 2) {
+        errorDiv.innerText = "La reserva debe ser para un mínimo de dos (2) pasajeros.";
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      if (adults + minors !== total) {
+        errorDiv.innerText = "La cantidad de adultos y menores debe coincidir exactamente con el total de pasajeros.";
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      if (minors > 0) {
+        if (adults < 1) {
+          errorDiv.innerText = "Los menores deben estar acompañados obligatoriamente por un adulto responsable.";
+          errorDiv.classList.remove('hidden');
+          return;
+        }
+        if (!adultName) {
+          errorDiv.innerText = "Debe indicar el nombre completo y teléfono/cédula del adulto responsable para los menores.";
+          errorDiv.classList.remove('hidden');
+          return;
+        }
+      }
+
+      if (activeBookingExcursion.availableSeats < total) {
+        errorDiv.innerText = `Solo quedan ${activeBookingExcursion.availableSeats} asientos disponibles.`;
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+
+      const code = `ERD-2025-${Math.floor(1000 + Math.random() * 9000)}`;
+      const pricePerPax = currentCurrency === 'USD' ? activeBookingExcursion.priceUSD : activeBookingExcursion.priceRD;
+      const totalCalculated = pricePerPax * total;
+
+      const newBooking = {
+        id: Date.now(),
+        bookingCode: code,
+        excursionId: activeBookingExcursion.id,
+        excursionTitle: activeBookingExcursion.title,
+        customerName: document.getElementById('prof-name').value || 'Prof. Carlos Méndez',
+        customerEmail: document.getElementById('prof-email').value || 'contacto@colegiosanjudas.edu.do',
+        departureDate: activeBookingExcursion.departureDate,
+        transportType: activeBookingExcursion.transportType,
+        pickupPoint: pickup,
+        totalPassengers: total,
+        adultsCount: adults,
+        minorsCount: minors,
+        responsibleAdultName: adultName || null,
+        currency: currentCurrency,
+        totalPrice: totalCalculated,
+        status: 'pendiente'
+      };
+
+      activeBookingExcursion.availableSeats -= total;
+      BOOKINGS.unshift(newBooking);
+      document.getElementById('badge-bookings-count').innerText = BOOKINGS.length;
+
+      document.getElementById('booking-form').classList.add('hidden');
+      document.getElementById('booking-success-box').classList.remove('hidden');
+      document.getElementById('booking-success-code').innerText = code;
+
+      renderExcursions();
+      renderMyBookings();
+      renderAdminTable();
+    }
+
+    // --- Render Mis Reservas ---
+    function renderMyBookings() {
+      const container = document.getElementById('my-bookings-list');
+      if (!container) return;
+
+      if (BOOKINGS.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-slate-400">No tienes reservas registradas.</div>`;
+        return;
+      }
+
+      container.innerHTML = BOOKINGS.map(bk => `
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-mono text-xs font-bold text-[#ce1126] bg-rose-50 px-2 py-0.5 rounded">${bk.bookingCode}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                bk.status === 'confirmada' ? 'bg-emerald-100 text-emerald-800' :
+                bk.status === 'cancelada' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
+              }">${bk.status}</span>
+            </div>
+            <h4 class="font-bold text-sm text-slate-900">${bk.excursionTitle}</h4>
+            <p class="text-xs text-slate-600">Fecha: <strong>${bk.departureDate}</strong> • Pasajeros: <strong>${bk.totalPassengers}</strong> (${bk.adultsCount}A / ${bk.minorsCount}M)</p>
+            ${bk.responsibleAdultName ? `<p class="text-[11px] text-slate-500">Adulto Responsable: ${bk.responsibleAdultName}</p>` : ''}
+            <p class="text-xs text-[#002f6c] font-semibold mt-1">Recogida: ${bk.pickupPoint}</p>
+          </div>
+          <div class="sm:text-right">
+            <span class="text-xs text-slate-400 block">Total:</span>
+            <span class="text-lg font-bold text-slate-900 block">${bk.currency === 'USD' ? 'US$ ' + bk.totalPrice : 'RD$ ' + bk.totalPrice.toLocaleString('es-DO')}</span>
+            ${bk.status !== 'cancelada' ? `
+              <button onclick="cancelBooking(${bk.id})" class="text-xs text-rose-600 hover:text-rose-800 underline font-medium">Cancelar reserva</button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function cancelBooking(id) {
+      const b = BOOKINGS.find(x => x.id === id);
+      if (b && b.status !== 'cancelada') {
+        b.status = 'cancelada';
+        const exc = EXCURSIONS.find(e => e.id === b.excursionId);
+        if (exc) {
+          exc.availableSeats = Math.min(exc.availableSeats + b.totalPassengers, exc.totalSeats);
+        }
+        renderExcursions();
+        renderMyBookings();
+        renderAdminTable();
+      }
+    }
+
+    // --- Panel Admin ---
+    function renderAdminTable() {
+      const tbody = document.getElementById('admin-bookings-table');
+      if (!tbody) return;
+
+      tbody.innerHTML = BOOKINGS.map(b => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-mono font-bold text-[#ce1126]">${b.bookingCode}</td>
+          <td class="p-3"><strong>${b.customerName}</strong></td>
+          <td class="p-3 max-w-[180px] truncate">${b.excursionTitle}</td>
+          <td class="p-3">${b.totalPassengers} pax</td>
+          <td class="p-3 font-bold">${b.currency === 'USD' ? 'US$ ' + b.totalPrice : 'RD$ ' + b.totalPrice.toLocaleString('es-DO')}</td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+              b.status === 'confirmada' ? 'bg-emerald-100 text-emerald-800' :
+              b.status === 'cancelada' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'
+            }">${b.status}</span>
+          </td>
+          <td class="p-3 text-right space-x-1">
+            ${b.status === 'pendiente' ? `
+              <button onclick="adminConfirmBooking(${b.id})" class="bg-emerald-600 text-white font-bold px-2 py-1 rounded text-[10px]">Confirmar</button>
+            ` : ''}
+            ${b.status !== 'cancelada' ? `
+              <button onclick="cancelBooking(${b.id})" class="bg-rose-600 text-white font-bold px-2 py-1 rounded text-[10px]">Cancelar</button>
+            ` : ''}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function adminConfirmBooking(id) {
+      const b = BOOKINGS.find(x => x.id === id);
+      if (b) {
+        b.status = 'confirmada';
+        renderMyBookings();
+        renderAdminTable();
+      }
+    }
+
+    // --- Favoritos & Itinerario ---
+    function renderFavorites() {
+      const container = document.getElementById('favorites-container');
+      if (!container) return;
+
+      container.innerHTML = FAVORITES.map(f => `
+        <div class="bg-slate-50 p-2 rounded-xl border flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 truncate">
+            <img src="${f.image}" class="w-8 h-8 rounded-lg object-cover" />
+            <span class="text-xs font-semibold truncate">${f.title}</span>
+          </div>
+          <button onclick="removeFavorite('${f.id}')" class="text-slate-400 hover:text-rose-500 text-xs">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function removeFavorite(id) {
+      FAVORITES = FAVORITES.filter(x => x.id !== id);
+      renderFavorites();
+    }
+
+    function renderItinerary() {
+      const container = document.getElementById('itinerary-days-container');
+      if (!container) return;
+
+      container.innerHTML = ITINERARY.map((it, idx) => `
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-xs text-[#ce1126]">DÍA ${it.day}</span>
+            <button onclick="deleteItineraryDay(${idx})" class="text-slate-400 hover:text-rose-500 text-xs">Eliminar</button>
+          </div>
+          <input type="text" value="${it.title}" class="w-full text-xs font-bold bg-transparent border-b border-slate-200 pb-1 mb-1 focus:outline-none" />
+          <textarea class="w-full text-xs text-slate-600 bg-transparent resize-none focus:outline-none" rows="2">${it.note}</textarea>
+        </div>
+      `).join('');
+    }
+
+    function addItineraryDay() {
+      const nextDay = ITINERARY.length + 1;
+      ITINERARY.push({ day: nextDay, title: `Día ${nextDay}: Nueva Aventura`, note: 'Escribe aquí los lugares a visitar...' });
+      renderItinerary();
+    }
+
+    function deleteItineraryDay(idx) {
+      ITINERARY.splice(idx, 1);
+      renderItinerary();
+    }
+
+    // --- Perfil de Usuario ---
+    function setAccountType(type) {
+      const btnTur = document.getElementById('btn-acc-turista');
+      const btnEsc = document.getElementById('btn-acc-escuela');
+      const schoolField = document.getElementById('school-name-field');
+
+      if (type === 'centro_educativo') {
+        btnEsc.className = 'p-3 rounded-2xl border border-amber-500 bg-amber-50 text-amber-900 font-bold text-center ring-2 ring-amber-400/30';
+        btnTur.className = 'p-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-center hover:bg-slate-50';
+        schoolField.classList.remove('hidden');
+        if (!educationalMode) toggleEducationalMode();
+      } else {
+        btnTur.className = 'p-3 rounded-2xl border border-[#002f6c] bg-sky-50 text-[#002f6c] font-bold text-center ring-2 ring-[#002f6c]/20';
+        btnEsc.className = 'p-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-center hover:bg-slate-50';
+        schoolField.classList.add('hidden');
+      }
+    }
+
+    function saveUserProfile() {
+      const name = document.getElementById('prof-name').value || 'Prof. Carlos Méndez';
+      document.getElementById('header-user-name').innerText = name.split(' ')[0] || 'Mi Cuenta';
+      closeModal('modal-profile');
+    }
+
+    // --- Reporte de Objeto Perdido ---
+    function submitLostItem(e) {
+      e.preventDefault();
+      document.getElementById('lost-success-box').classList.remove('hidden');
+      setTimeout(() => {
+        closeModal('modal-lost-item');
+        document.getElementById('lost-form').reset();
+        document.getElementById('lost-success-box').classList.add('hidden');
+      }, 2000);
+    }
+
+    // Inicializar componentes al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProvinces();
+      renderAccommodations();
+      renderExcursions();
+      renderMyBookings();
+      renderAdminTable();
+      renderFavorites();
+      renderItinerary();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
